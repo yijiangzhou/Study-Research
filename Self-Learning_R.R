@@ -3,6 +3,7 @@
 
 
 #Chapter 1 Introduction ####
+
 mean(1:5)
 
 a_vector <- c(1,3,6,10)
@@ -20,6 +21,7 @@ sd(hundred) #小练习：计算标准差
 
 
 #Chapter 2 Calculator ####
+
 new <- c(1,2,3,4)+c(5,6,7,8)
 new - 2 #每个元素都会-2
 
@@ -58,6 +60,7 @@ all(sometrue) #all和any也用于逻辑运算
 
 
 #Chapter 3 & 4 ####
+
 bla <- c(1,3,4,7,10)
 for (i in 1:length(bla))
   print(bla[i]) #print函数的用法
@@ -149,6 +152,7 @@ a_matrix %*% t(b_matrix) #矩阵乘法
 
 
 #Chapter 5 Lists and Dataframes ####
+
 (a_list <- list(
   c(1,1,2,5,14,42),
   month.abb,
@@ -293,6 +297,7 @@ evenodd <- function(x){
 
 
 #Chapter 8 Flow Control and Loops ####
+
 if(TRUE)
   message("It is true!") #这个message函数会返回加红的字体，有时候会用到！
 
@@ -368,6 +373,69 @@ howmany <- function(x){
   }
   print(collection)
 }
+
+#Chapter 9 Advanced Looping ####
+
+rep(runif(1),5) #rep每次返回的结果是相同的
+replicate(5,runif(1)) #replicate每次返回的结果是独立（不同）的
+
+primef <- list(
+  two = 2, three = 3, four = c(2,2),
+  five = 5, six = c(2,3), seven = 7,
+  eight = c(2,2,2), nine = c(3,3),
+  ten = c(2,5)
+)
+primef
+
+#如何从primef中提取unique factor？
+lapply(primef, unique) #使用lapply和unique函数
+
+#如果用for循环，会比较麻烦
+listunique = function(x){
+  unifac <- vector(mode = "list", length = length(x))
+  #技巧：用vector指定生成空lists
+  for (i in 1:length(x)){
+    unifac[[i]] <- unique(x[[i]]) #使用双括号提取出来的才是元素本身！
+  }
+  names(unifac) <- names(primef)
+  print(unifac)
+}
+
+vapply(primef,mean,numeric(1)) ##vapply is "list apply that returns a vector"
+
+sapply(primef, unique)
+sapply(primef, mean)
+sapply(primef, summary) #sapply非常智能，会根据function的不同返回list、vector或array
+
+install.packages("matlab")
+library(matlab) #使用matlab包可以对矩阵的行、列执行函数，见下
+#matlab包会覆盖一些R本身的函数，要disable这个包，用
+detach("package:matlab")
+
+magic4 <- magic(4)
+m1 <- matrix(1:16,nrow = 4,byrow = TRUE)
+rowSums(m1)
+colSums(m1) #都是matlab包自带的函数，用于求矩阵每一行或每一列的和
+
+#也可以用apply
+apply(m1,MARGIN = 1,toString) #MARGIN = 1表示对each row
+apply(m1,MARGIN = 2,toString) #MARGIN = 2表示对each column
+
+mapply(median,m1,magic4) #mapply可将一个函数用于多个matrix
+
+#重要：分组计算——R中的split-apply-combine problem
+gamescore <- data.frame(
+  player = rep(c("Jack","Cathy","Cheng Peng"),times = c(2,3,4)),
+  score = round(rlnorm(9,8),-1)
+)
+gamescore
+
+#如何求Jack、Cathy、Cheng Peng每个人的平均分呢？
+meanscore <- with(gamescore,tapply(score, player, mean)) #使用with和tapply即可
+
+
+
+
 
 
 
