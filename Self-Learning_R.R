@@ -433,13 +433,66 @@ gamescore
 #如何求Jack、Cathy、Cheng Peng每个人的平均分呢？
 meanscore <- with(gamescore,tapply(score, player, mean)) #使用with和tapply即可
 
+library(plyr)
+llply(primef,unique) #同lapply
+laply(primef,length) #同sapply
 
+#ddaply可用于替换tapply用于分组计算，且可以同时计算多个指标
+gamescore$level <- floor(log(gamescore$score))
+#计算三人的average score和average level
+ddply(
+  gamescore,
+  .(player), #表示根据player来分组
+  colwise(mean)
+)
+#或者对不同行做不同计算：加上summarize即可
+ddply(
+  gamescore,
+  .(player),
+  summarize,
+  mean_score = mean(score),
+  min_level = min(level)
+)
 
+#小练习1：统计第一代家庭成员各有几个孩子
+bigfamily <- list(
+  John = list(),
+  Philip = list(
+    "Jack","Natalie","Philip Jr.","David"
+  ),
+  "Chris Ivory" = list(
+    "Tom","Jerry","Lawrance"
+  ),
+  Kim = list(),
+  Marlon = list(
+    "Shawn","Arry"
+  ),
+  Diedre = list(
+    "Craig","Gregg","Summer","Justin","James"
+  ),
+  "Oliver Young" = list("Laila")
+)
 
+#方法一：for loop
+countkids <- function(x){
+  out <- rep(0,length(x))
+  for (i in 1:length(x)){
+    out[i] <- length(x[[i]])
+    names(out) <- names(bigfamily)
+    message(names(bigfamily)[i]," has ",length(x[[i]])," kids.")
+  }
+  return(out) #学会用return来输出结果
+}
+countkids(bigfamily)
+nkids <- countkids(bigfamily)
+nkids
 
+#方法二：apply
+sapply(bigfamily,length)
 
-
-
+#方法三：plyr
+nkids <- laply(bigfamily,length)
+names(nkids) <- names(bigfamily)
 
 
 
