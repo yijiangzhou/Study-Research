@@ -454,7 +454,7 @@ ddply(
   min_level = min(level)
 )
 
-#小练习1：统计第一代家庭成员各有几个孩子
+#小练习：统计第一代家庭成员各有几个孩子
 bigfamily <- list(
   John = list(),
   Philip = list(
@@ -493,6 +493,12 @@ sapply(bigfamily,length)
 #方法三：plyr
 nkids <- laply(bigfamily,length)
 names(nkids) <- names(bigfamily)
+
+
+
+
+
+
 
 
 
