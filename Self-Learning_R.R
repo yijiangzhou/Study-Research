@@ -1,5 +1,6 @@
 #My first R project
 #Textbook: Learning R
+options("repos"=c(CRAN="https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
 
 
 #Chapter 1 Introduction ####
@@ -373,6 +374,7 @@ howmany <- function(x){
   }
   print(collection)
 }
+
 
 #Chapter 9 Advanced Looping ####
 
