@@ -384,6 +384,7 @@ est store t104
 
 esttab t104 using table10-2.tex,se star(* 0.1 ** 0.05 *** 0.01) drop(1998.year 1999.year 2000.year 2001.year 2002.year 2003.year 2004.year 2005.year 2006.year 2007.year) scal(r2_w twowayfe clustvar)
 
+use "C:\Users\JackZHOU\Desktop\科研实践\政府支出的乘数与挤出效应\每周报告\2020.01.20\98-07不删商务_去掉省内一阶邻市真实值match.dta", clear
 sort cty year
 xtset cty year
 xtreg trans_real ivf revenue_real gdpper_real urbanrate population land i.year if city!="绥化",fe r cluster(city)
