@@ -1,0 +1,756 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{longtable}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\author{Yijiang Zhou}
+\title{Progress Report}
+\date{\today}
+\begin{document}
+
+\begin{landscape}
+
+\begin{center}
+
+Table 1 Information of Newly-appointed Ministers\\
+
+\medskip
+
+\begin{scriptsize}
+\begin{tabular}{lcccccc} \hline \hline
+Minister & Ministry &  Tenure & Home City & Position Prior to Appointment & In the Sample?& Worked in Home City? \\ \hline
+Li Zhaoxing & Foreign Affairs & 2003-2007 & Qingdao, Shandong & Deputy Minister of Foreign Affairs &  No & No \\
+Cao Gangchuan & Defence & 2003-2008 & Pingdingshan, Henan & Deputy Chairman of Central Military Commission & Yes & No\\
+Ma Kai & NDRC & 2003-2008 & Lvliang, Shaanxi&  Deputy Secretary General of State Council & Yes & No\\
+Zhou Ji & Education & 2003-2009 & Shanghai & Deputy Minister of Education &No & No\\
+Wang Xudong & Information Industry & 2003-2008 & Yancheng, Jiangsu & Deputy Minister of Information Industry &Yes & No \\
+Zhou Yongkang & Public Security & 2002-2007 & Wuxi, Jiangsu & Party Committee Secretary of Sichuan Province & Yes & No \\
+Li Zhilun & Supervision & 2003-2007 & Jinzhou, Liaoning& Deputy Minister of Supervision & Yes & No\\
+Li Xueju & Civil Affairs & 2003-2010 &  Siping, Jilin & Deputy Minister of Civil Affairs & Yes & Yes, before 1978 \\ 
+Jin Renqing & Finance & 2003-2007 & Suzhou, Jiangsu& Director of State Taxation Administration & Yes & No \\
+Zheng Silin & Labor and Social Security & 2003-2005 &Tianjin & Deputy Secretary of CPC Central Committee of Enterprises & No & No \\
+Zhang Bolin & Human Resources & 2003-2007 & Yingkou, Liaoning & Deputy Minister of CPC Central Organization Department & Yes & Yes, before 1978\\
+Sun Wensheng & Natural Resources & 2003-2007 & Weihai, Shandong & Deputy Minister of Natural Resources & Yes & No\\
+Zhang Chunxian & Transportation & 2002-2005 & Xuchang, Henan& Deputy Minister of Transportation & Yes & Yes, before 1978\\
+Liu Zhijun & Railway & 2002-2011 & Ezhou, Hubei & Deputy Minister of Railway & No & No\\
+Wu Yi & Health & 2003-2005 & Wuhan, Hubei & Deputy Premier of State Council & No & No\\
+Zhou Xiaochuan & People's Bank of China & 2002-2013 & Wuxi, Jiangsu& Chairman of Securities Regulatory Commission & No & No\\
+Zhang Yunchuan & Defence Technology and Industry & 2003-2007 & Jinhua, Zhejiang& Governor of Hunan Province & Yes & No \\
+Lv Fuyuan & Commerce & 2003-2004 & Suihua, Heilongjiang & Deputy Minister of Foreign Trade and Economic Cooperation & No  & No\\
+[0.25em]
+\hline \hline
+\multicolumn{7}{p{26.2cm}}{\footnotesize The table reports some relevant information on 18 newly-appointed ministers between late 2002 and 2003. They include minister's name, ministry, term, home (birth) city and province, position held prior to the appointment, whether he/she is included in the sample and whether he/she had working experience in home cities. There are three reasons why some ministers are excluded from the sample (i.e. the dataset we employed to study fiscal multipliers and corporate behavior). The first one is that funds for some ministries would not be transferred to local governments (Foreign Affairs, Railway, People's Bank of China). The second one is that a few ministers were from capital cities of certain provinces. The third one is that the minister entered the position in very poor health and passed away one year later (Minister Lv Fuyuan of Commerce). 
+}\\
+\end{tabular}
+
+\end{scriptsize}
+\end{center}
+
+
+
+\end{landscape}
+
+\newpage
+
+\begin{center}
+Table 2 Summary Statistics after PSM 1998-2002 \\
+\medskip
+\begin{scriptsize}
+\begin{tabular}{lcccccc} \hline \hline
+ & (1) & (2) & (3) & (4) & (5) & (6)  \\
+& Control Group & &  & Treatment Group & &  \\
+VARIABLES   & Mean & SD & Observations&  Mean & SD & Observations \\ \hline
+
+Transfer (10,000 RMB)& ${\rm  26,872^{*}}$ & 19,564 & 782 & 33,315 & 24,118 & 53 \\
+Population (10,000 people) & 378.7 & 215.6 & 782 & 434.4 & 160.5 & 53 \\
+Land (${\rm km^{2}}$) & 11,441 & 7,623 & 782 & 10,202 & 7,058 & 53 \\
+Urbanization Rate  & 0.294 & 0.164 & 782 & 0.312 & 0.0948 & 53  \\
+GDP per capita (1 RMB) & ${\rm  8,316^{*}}$ & 9,064 & 782 & 12,946 & 9,456 & 53 \\
+Calculated CIT Rate & 0.119 & 0.113 & 552 & 0.126 & 0.0818 & 47  \\
+VAT Rate & 0.130 & 0.0379 & 640 & 0.125 & 0.0329 & 50\\
+[0.5em]
+${\rm \frac{Revenue}{Expenditure}}$ & 0.322 & 0.219 & 780 & 0.303 & 0.179 & 53\\
+[0.5em]
+${\rm \frac{\Delta GDP}{GDP_{t-1}}}$  & 0.0859 & 0.0595 & 608 & 0.0941 & 0.0512 & 42  \\
+[0.5em]
+${\rm \frac{\Delta Expenditure}{Expenditure_{t-1}}}$ & 0.186 & 0.116 & 606 & 0.198 & 0.0991 & 42  \\
+\hline \hline
+\multicolumn{7}{p{15.3cm}}{\footnotesize This table compares the real term city-level variables between treatment group and control group after propensity score matching (PSM) is implemented. The mean, standard deviation (SD) and number of observations of key variables, which include earmarked transfer (Transfer), population, administrative area (Land), GDP per capita, urbanization rate, calculated Corporate Income Tax rate, Value-add Tax rate, Total tax rate (Total tax revenue divided by GDP), revenue-expenditure ratio (${\rm \frac{Revenue}{Expenditure}}$), growth rate of GDP (${\rm \frac{\Delta GDP}{GDP_{t-1}}}$), growth rate of expenditure (${\rm \frac{\Delta Expenditure}{Expenditure_{t-1}}}$), are reported. * denotes that the control group average is significantly different than the treatment group average at the 5\% level. The sample period is from 1998 to 2002, the pre-shock period. }\\
+\end{tabular}
+\end{scriptsize}
+\end{center}
+
+
+\newpage
+
+\begin{center}
+Table 3 Ministerial Effects on Earmark Transfer \\
+\medskip
+\begin{scriptsize}
+
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+            &\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}\\
+\hline
+Minister$\times$D03         &     13618.8\sym{**} &     11684.1\sym{**} &     13776.3\sym{**} &       14708.1\sym{***}&       12635.6\sym{**} &     10892.8\sym{*} \\
+            &    (5593.5)         &    (5437.5)         &    (5671.3)         &    (5503.1)        &   (5421.7)         &    (6330.9)      \\
+[1em]
+Revenue &      0.0248\sym{**} &      0.0253\sym{**} &      0.0228\sym{*}  &      0.0243\sym{**} &     0.0229\sym{**} &      0.0445\sym{***}  \\
+            &    (0.0116)         &    (0.0117)         &    (0.0136)         &   (0.0119)       &     (0.0111)         &    (0.0160)           \\
+[1em]
+GDP per capita &      -1.039\sym{***}&      -1.031\sym{***}&      -1.054\sym{***}&      -0.973\sym{***} &      -0.856\sym{***}&      -1.785\sym{***}\\
+            &     (0.206)         &     (0.203)         &     (0.331)         &    (0.201)     &      (0.152)         &     (0.438)      \\
+[1em]
+Urbanrate   &    -35073.9         &    -33031.9         &    -32660.8         &     -21470.8         &   -21768.5         &    -69017.4         \\
+            &   (22864.0)         &   (22802.3)         &   (24540.7)         &    (22510.1)         &  (15368.4)         &   (50153.1)            \\
+[1em]
+Population  &       515.4\sym{***}&       511.7\sym{***}&       502.4\sym{***}&        522.3\sym{***}&         495.5\sym{***}&       429.1\sym{**} \\
+            &     (102.2)         &     (102.2)         &     (104.4)         &    (102.2)        &     (103.1)         &     (175.1)      \\
+[1em]
+Land        &       2.330\sym{*}  &       2.334\sym{*}  &       2.438\sym{*}  &        2.406\sym{*}    &         1.454         &       2.218    \\
+            &     (1.369)         &     (1.378)         &     (1.364)         &     (1.446)         &       (1.392)         &     (2.161)            \\
+[1em]
+\_cons      &   -187469.9\sym{***}&   -187051.7\sym{***}&   -190274.5\sym{***}&  -187353.5\sym{***} &  -168751.5\sym{***}&   -138111.1\sym{*} \\
+            &   (38981.6)         &   (39142.0)         &   (40837.5)         & (38239.3)    &   (41423.7)         &   (69715.0)         \\
+\hline
+Observations        &        1729         &        1737         &        1661         &       1718         &         2087         &         655          \\
+Within $R^{2}$       &       0.761         &       0.760         &       0.766         &       0.758          &      0.743         &       0.771         \\
+Two-way FE    &   Yes    &      Yes     &   Yes         &      Yes            &     Yes           &           Yes            \\
+Clustered at      &        City         &        City         &        City         &        City         &        City         &        City         \\
+\hline\hline
+\multicolumn{7}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{7}{p{14.5cm}}{\footnotesize The table reports the results from estimating ministerial effects on earmark transfer with propensity-score-matched (PSM) sample and non-PSM sample. Presented in Column 1 are results from regressing city-level earmarked transfer (Transfer) on an interaction term of Minister and D03, as well as GDP per capita, urbanization rate (urbanrate), population, administrative area (land) and revenue using PSM sample. Column 2 reports results of re-estimating the equation with Minister of Commerce included in the PSM sample. Column 3 are results from estimating the equation without provinces located west of the Heihe-Tengchong Line using PSM sample. These provinces are Xinjiang, Tibet, Inner Mongolia, Qinghai, Gansu and Ningxia. In Column 4 we replicate the results in Column 1 using a different PSM sample matched with a smaller calliper (0.01). Column 5 presents replication of results in Column 1 using non-PSM sample. Column 6 uses the same non-PSM sample but restrict the control group to be cities located within the same province as ministers' home-towns. City and year fixed effects are controlled in all regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The sample period is from 1998 to 2007. }\\
+\end{tabular}
+}
+
+\end{scriptsize}
+\end{center}
+
+\newpage
+
+\begin{center}
+Table 4 Ministerial Effects on Earmark Transfer: Dynamic Effects \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}\\
+\hline
+Minister\(\times\)TD98       &      4336.5         &      4396.5         \\
+            &    (5499.2)         &    (5457.7)         \\
+[1em]
+Minister\(\times\)TD99       &      6895.1         &      6717.7         \\
+            &    (4450.4)         &    (4407.0)         \\
+[1em]
+Minister\(\times\)TD00       &      3133.6         &      3340.8         \\
+            &    (3592.2)         &    (3547.3)         \\
+[1em]
+Minister\(\times\)TD01       &     -1873.3         &     -1876.8         \\
+            &    (2772.2)         &    (2760.5)         \\
+[1em]
+Minister\(\times\)TD03       &      4155.2\sym{*}  &      4086.3\sym{*}  \\
+            &    (2163.1)         &    (2232.1)         \\
+[1em]
+Minister\(\times\)TD04       &      6292.4\sym{*}  &      6485.5\sym{*}  \\
+            &    (3351.6)         &    (3463.8)         \\
+[1em]
+Minister\(\times\)TD05       &     37767.1\sym{*}  &     38534.9\sym{*}  \\
+            &   (22591.6)         &   (22704.8)         \\
+[1em]
+Minister\(\times\)TD06       &     16427.4\sym{**} &     16562.8\sym{**} \\
+            &    (6404.7)         &    (6488.3)         \\
+[1em]
+Minister\(\times\)TD07       &     17093.3         &     16923.1         \\
+            &   (11166.1)         &   (11147.0)         \\
+[1em]
+\_cons      &   -185098.1\sym{***}&   -187719.2\sym{***}\\
+            &   (39043.8)         &   (40942.6)         \\
+City-level Controls &  Yes      &    Yes  \\            
+\hline
+Observations        &        1729         &        1661         \\
+Within $R^{2}$       &       0.765         &       0.770         \\
+Two-way FE    &  Yes    &   Yes                   \\
+Clustered at    &         City         &    City  \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{7.5cm}}{\footnotesize This table investigates dynamics of ministerial effect by regressing earmark transfer (Transfer) on the interaction term of Minister and a series of year dummies (TD), as well as some city-level control variables. The year dummies equal to 1 in their respective years and equal to 0 otherwise (e.g. TD03 equals to 1 only in 2003). In Column 1 we regress transfer on interacted Minister and TDs as well as city-level controls. By observing the changes in the magnitude of $\beta_{1}$ (the coefficient of Minister\(\times\)TDs), a reversed U trend can be captured and we plot it in Figure 2. In Column 2 we perform the same regression as in Column 1 without provinces located west of the Heihe-Tengchong Line. These provinces are Xinjiang, Tibet, Inner Mongolia, Qinghai, Gansu and Ningxia. City and year fixed effects are controlled in both regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The sample has been matched using PSM and its period is from 1998 to 2007. }\\
+\end{tabular}
+}
+
+
+\end{scriptsize}
+\end{center}
+
+
+\newpage
+
+\begin{center}
+Table 5 Effective Tax Rate\\
+
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{VAT Rate}&\multicolumn{1}{c}{Calc CIT Rate}\\
+\hline
+Minister\(\times\)D03          &    -0.00381         &     -0.0138         \\
+            &    (0.0107)         &    (0.0280)         \\
+[1em]
+GDP per capita &     0.00256         &     0.00472         \\
+            &   (0.00251)         &   (0.00721)         \\
+[1em]
+Population      &       0.172         &       0.318         \\
+(10 people)            &     (0.186)         &     (0.619)         \\
+[1em]
+Land       &      0.0174         &     -0.0303         \\
+(${\rm 10^{-4} \, km^{2}}$)              &    (0.0139)         &    (0.0572)         \\
+[1em]
+Urbanrate   &      0.0707\sym{*}  &       0.172         \\
+            &    (0.0404)         &     (0.105)         \\
+[1em]
+\_cons      &      0.0342         &     -0.0102         \\
+            &    (0.0671)         &     (0.248)         \\
+\hline
+Observations       &        1240         &        1264         \\
+Within $R^{2}$        &       0.207         &      0.0231         \\
+Two-way FE   &   Yes       &    Yes       \\
+Clustered at   &        City         &        City             \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{6.5cm}}{\footnotesize The table reports results from regressing city-level effective Value-add Tax rate (VAT Rate) and calculated Corporate Income Tax rate (Calc CIT Rate) on the interaction term of Minister and D03, as well as GDP per capita, population, land and urbanization rate (urbanrate). City and year fixed effects are controlled in both regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The sample has been matched using PSM and its period is from 1998 to 2007. }\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+\newpage
+\begin{landscape}
+\begin{center}
+Table 6 The Multiplier Effect\\
+
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+            &\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}\\
+\hline
+$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$   &       1.555\sym{**} &       1.197\sym{**} &       1.564\sym{**} &       1.940\sym{*}  &       1.434\sym{**}   &       1.506\sym{**}  \\
+            &     (0.636)         &     (0.588)         &     (0.702)         &     (1.028)         &    (0.726)         &      (0.640)        \\
+\hline
+Observations      &        1519         &        1461         &        1519         &        1325         &         1504         &        1857          \\
+IV         & ${\rm Minister \times D03}$   &  ${\rm Minister \times D03}$        &  ${\rm Minister \times D03}$     &  ${\rm Minister \times D03}$  &  ${\rm Minister \times D03}$  &  ${\rm Minister \times D03}$     \\
+       &    ${\rm Minister \times Tenure_{t-2002}^2}$   &    ${\rm Minister \times Tenure_{t-2002}^2}$    &  ${\rm Minister \times Tenure_{t-2002}^2}$   &    ${\rm Minister \times Tenure_{t-2002}^2}$   &    ${\rm Minister \times Tenure_{t-2002}^2}$    &  ${\rm Minister \times Tenure_{t-2002}^2}$    \\
+        &      $\rm Transfer_{t-1}$     &     $\rm Transfer_{t-1}$      &    $\rm Transfer_{t-1}$      &      $\rm Transfer_{t-2}$     &     $\rm Transfer_{t-1}$      &    $\rm Transfer_{t-1}$      \\
+Two-way FE    &   Yes   & Yes   &      Yes & Yes & Yes & Yes   \\
+City-level Controls &   Yes         &  Yes        &    No & Yes  &  Yes  &  Yes    \\
+K-P rk LM Stat P-value          &    0.000644         &    0.000671         &     0.00137         &     0.00446         &     0.00127        &      0.0000121       \\
+K-P rk Wald F Statistic    &       16.29         &       16.65         &       14.23         &       11.94         &       14.47        &        24.73         \\
+Hansen J Stat P-value   &       0.866         &       0.529         &       0.917         &       0.808         &     0.932       &       0.984       \\
+Clustered at    &        City       &        City       &        City       &        City       &        City       &        City       \\
+\hline\hline
+
+\\
+First-Stage Results  &   &    & \\
+[0.5em]
+
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+            &\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$ }\\
+\hline
+Minister\(\times\)D03      &     0.00473\sym{***}&     0.00484\sym{***}&     0.00412\sym{***}&     0.00451\sym{***}&      0.00429\sym{***}&    0.00603\sym{***}\\
+            &   (0.00137)         &   (0.00140)         &   (0.00140)         &   (0.00131)         &   (0.00138)       &    (0.00139)        \\
+[1em]
+Minister\(\rm \times Tenure_{t-2002}^2 \)       &   -0.000335\sym{***}&   -0.000348\sym{***}&   -0.000327\sym{***}&   -0.000341\sym{***}&   -0.000331\sym{***}&    -0.000437\sym{***}\\
+            &  (0.000116)         &  (0.000114)         &  (0.000113)         &  (0.000109)         & (0.000114)         &  (0.000119)         \\
+[1em]
+   $\rm Transfer_{t-1}$ &    -0.00129\sym{***}&    -0.00131\sym{***}&    -0.00114\sym{***}&                     &      -0.00124\sym{***}    &      -0.00153\sym{***}   \\
+            &  (0.000263)         &  (0.000267)         &  (0.000255)         &                     &      (0.000277)     &      (0.000264)        \\
+[1em]
+   $\rm Transfer_{t-2}$ &                     &                     &                     &   -0.000919\sym{***}&        &     \\
+            &                     &                     &                     &  (0.000305)         &          &            \\
+\hline
+Observations      &        1519         &        1461         &        1519         &        1325         &        1504         &        1857         \\
+\hline\hline
+
+\multicolumn{7}{l}{\footnotesize Robust standard errors in parentheses. }\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{7}{p{25cm}}{\footnotesize The upper part of the table reports the results from the estimation of local fiscal multiplier and its robustness. Reported in Column 1 is the result from estimating the multiplier using IV approach and PSM sample, with 3 IVs for GDP-adjusted difference of government spending. Column 2 excludes provinces located west of the Heihe-Tengchong Line from the sample. These provinces are Xinjiang, Tibet, Inner Mongolia, Qinghai, Gansu and Ningxia. Column 3 excludes all city-level control variables. Column 4 replaces $\rm Transfer_{t-1}$ with $\rm Transfer_{t-2}$ as one of the IVs. Column 5 replicates results in Column 1 using a different PSM sample matched with a smaller calliper (0.01). Column 6 presents replication of results in Column 1 using non-PSM sample. City and year fixed effects are controlled in all regressions and a set of city-level control variables are also included for all regressions except the one in Column 3. For each regression, the table reports number of observations, IV, K-P rk LM Statistic P-value, K-P rk Wald F Statistic, Hansen J Statistic P-value and cluster level of robust standard errors. The lower part of the table reports the first-stage results of the multiplier estimations. The unit of lagged transfer in this table has been adjusted to 1 RMB. The sample period is from 1998 to 2007. }\\
+\end{tabular}
+}
+
+\end{scriptsize}
+\end{center}
+\end{landscape}
+
+
+\newpage
+
+\begin{center}
+Table 7 Anticipation\\
+
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}\\
+\hline
+$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$     &     -0.369         &   -0.319       \\
+            &  (0.957)    &    (0.964)           \\
+\hline
+Observations       &         644         &         644         \\
+IV         & ${\rm Minister \times D00}$ &  ${\rm Minister \times D02}$         \\
+       &      ${\rm Minister \times PlaceboTenure^2}$        &  $\rm Transfer_{t-1}$    \\
+       &               $\rm Transfer_{t-1}$       &     \\
+Two-way FE    &   Yes   & Yes     \\
+City-level Controls &   Yes         &  Yes         \\
+K-P rk LM Stat P-value          &     0.275         &        0.115          \\
+K-P rk Wald F Statistic      &        2.119       &      3.412           \\
+Hansen J Stat P-value    &     0.320         &       0.255   \\
+Clustered at    &        City       &        City         \\
+\hline\hline
+
+\\
+First-Stage Results  &   &    \\
+[0.5em]
+
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$}\\
+\hline
+Minister\(\times\)D00   &     0.00102        &         \\
+            &  (0.00249)      &        \\
+[1em] 
+Minister\(\times\)D02   &         &       -0.00278     \\
+            &         &       (0.00179)       \\
+[1em]
+${\rm Minister \times PlaceboTenure^2}$   &  -0.000441       &       \\
+            &     (0.000313)        &    \\
+[1em]
+$\rm Transfer_{t-1}$ &  -0.00226\sym{**} &    -0.00226\sym{**} \\
+            &  (0.000956)     &   (0.000952)     \\
+\hline
+Observations       &         644         &         644         \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{10cm}}{\footnotesize The upper part of the table reports the results from testing whether there are anticipation effects in local fiscal multiplier estimations using PSM sample. Column 1 replaces D03 and \(\rm Tenure_{t-2002}^2\) with D00 and \(\rm PlaceboTenure^2\), where \(\rm PlaceboTenure^2\) modifies the original \(\rm Tenure_{t-2002}^2\) by assuming ministers took office in 2000. Column 2 replaces D03 with D02 in IV estimation. One of the original IVs Minister\(\rm \times Tenure_{t-2002}^2 \) is dropped to avoid collinearity. City and year fixed effects are controlled in both regressions and a set of city-level control variables are also included. For each regression, the table reports number of observations, IV, K-P rk LM Statistic P-value, K-P rk Wald F Statistic, Hansen J Statistic P-value and cluster level of robust standard errors. The lower part of the table reports the first-stage results. The unit of lagged transfer in this table has been adjusted to 1 RMB. The sample period is from 1998 to 2002. }\\
+\end{tabular}
+}
+
+\end{scriptsize}
+\end{center}
+
+\newpage
+
+\begin{center}
+Table 8 Anticipation: Difference-in-Difference\\
+
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{4}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{\(\rm \ln GDP\)}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{\(\rm \ln GDP\)}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}\\
+\hline
+${\rm Minister \times D00}$      &     0.00710         &  0.0233        &           &                     \\
+            &    (0.0188)         &      (0.0179)    &          &                     \\
+[1em]
+${\rm Minister \times D02}$       &                     &      &      0.0170            &      0.0140         \\
+            &                     &    &         (0.0139)      &    (0.0115)         \\
+[1em]
+Revenue  &     0.00306\sym{***}&   -0.000137         &     0.00302\sym{***}&   -0.000129         \\
+            &  (0.000987)         &  (0.000475)         &  (0.000988)         &  (0.000485)         \\
+[1em]
+Urbanrate   &       0.154         &      -0.171         &       0.154         &      -0.154         \\
+            &     (0.205)         &     (0.166)         &     (0.202)         &     (0.165)         \\
+[1em]
+Population      &      -0.717\sym{*}  &      -0.808         &      -0.715\sym{*}  &      -0.862         \\
+            &     (0.413)         &     (0.613)         &     (0.409)         &     (0.600)         \\
+[1em]
+Land      &     0.00880         &     -0.0199\sym{*}  &     0.00898         &     -0.0202\sym{**} \\
+            &    (0.0154)         &    (0.0101)         &    (0.0155)         &   (0.00992)         \\
+[1em]
+\_cons      &       14.60\sym{***}&       0.444\sym{**} &       14.60\sym{***}&       0.460\sym{**} \\
+            &     (0.177)         &     (0.221)         &     (0.177)         &     (0.218)         \\            
+\hline
+Observations      &         832         &      648        &     832       &         648         \\
+Within $R^{2}$       &       0.854         &          0.133     &        0.855         &       0.132         \\
+Two-way FE    &   Yes    &     Yes      &      Yes        &   Yes       \\
+Clustered at  &        City         &        City        &      City         &      City         \\
+\hline\hline
+\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{5}{p{10.3cm}}{\footnotesize The table investigates anticipation effect by regressing city-level \(\rm \ln GDP\) and $\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$ on either ${\rm Minister \times D00}$ or ${\rm Minister \times D02}$ with some control variables. ${\rm Minister \times D00}$ and ${\rm Minister \times D02}$ assume ministers took office in 2000 and 2002, respectively. City and year fixed effects are controlled in both regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The unit of four control variables have been adjusted. The sample has been matched using PSM and its period is from 1998 to 2007. }\\
+\end{tabular}
+}
+
+
+\end{scriptsize}
+\end{center}
+
+
+\newpage
+
+\begin{center}
+Table 10 Spillover Effects: Transfer \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{5}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}\\
+            &\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}\\
+\hline
+Neighborcity\(\times\)D03        &      7540.7\sym{**}   &   11639.6\sym{***}&          -7148.8  & &   \\
+            &    (3670.4)         &    (3693.4)  &      (6724.6)               &     &     \\
+[1em]
+Neighborcity2\(\times\)D03    &    &    &  &    7919.8 &  \\
+          &                   &     &      &       (6179.0)  &   \\
+[1em]
+Minister\(\times\)D03        &      &    &  &    &   14296.9\sym{**} \\
+            &      &      &     &      &    (5640.5)         \\
+[1em]
+Revenue &      0.0248         &      0.0192        &      0.0161            &        0.0244    &    0.0187       \\
+            &    (0.0257)         &    (0.0250)    &    (0.0267)         &   (0.0237)      &    (0.0140)        \\
+[1em]
+GDP per capita &      -0.935\sym{***}&      -0.846\sym{***} &      -0.812\sym{***} &       -1.094\sym{*** }&      -0.894\sym{***}\\
+            &     (0.308)         &     (0.290)     &     (0.303)         &     (0.308)        &     (0.181)          \\
+[1em]
+Urbanrate   &    -16759.2         &    -17751.0    &    -14059.0           &    -16659.1    &    -19923.2         \\
+            &   (15462.6)         &   (15513.4)    &   (15822.1)           &    (15102.0)     &   (16396.0)       \\
+[1em]
+Population  &       480.3\sym{***}&       494.6\sym{***}&       465.0\sym{***}&       542.1\sym{***}  &       519.6\sym{***}\\
+            &     (102.9)         &     (102.5)   &     (110.6)            &      (123.0)    &     (110.3)     \\
+[1em]
+Land        &       1.103         &       1.088        &       1.082       &     2.708\sym{**}    &       2.220          \\
+            &     (1.395)         &     (1.414)      &     (1.377)       &      (1.311)        &     (1.415)           \\
+[1em]
+\_cons      &   -160715.7\sym{***}&   -166240.1\sym{***}&   -154997.5\sym{***}  &   -197858.0\sym{***} &   -191912.3\sym{***}\\
+            &   (40321.0)         &   (40468.8)    &   (41976.5)      &   (40886.8)     &   (41233.0)      \\
+\hline
+Observations       &        1925         &        1869      &        1727        &        1565        &        1518   \\
+Within $R^{2}$      &       0.759         &       0.761  &       0.755         &      0.747     &       0.755     \\
+Two-way FE    &    Yes    &   Yes   & Yes    &   Yes  & Yes  \\
+Clustered at     &        City         &        City    & City     &        City  &  City        \\
+\hline\hline
+\multicolumn{6}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{6}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{6}{p{13cm}}{\footnotesize This table investigates spillover in earmark transfer by regressing transfer on the interaction term of a policy dummy (differing in each column) and D03. Results in Column 1 are from the regression of transfer on interacted Neighborcity (a dummy that equals to 1 if the city is a geographically neighboring one to cities producing ministers) and D03, as well as some controls. It investigates the ``first-order spillover effects''. In Column 2 we exclude neighbor cities that are not located within the same province as ministers' home cities. Column 3 keeps neighbor cities that are not located within the same province as ministers' home cities and excludes same-province neighbor cities. In Column 4 we regress transfer on interacted Neighborcity2 (a dummy that equals to 1 if the city is a geographically neighboring one to cities whose Neighborcity equals to 1) and D03 as well as controls. The ``second-order'' neighbor cities which are not in the same province as ministers' home cities are excluded in Column 4. Column 5 excludes within-province neighbor cities from the non-PSM sample, rematched it using the same criteria, and replicate the results in Table 3 Column 1. City and year fixed effects are controlled in all regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. Column 1, 2 and 3 uses PSM sample of ``neighbor-non neighbor'' cities. Column 4 uses PSM sample of ``second order neighbor-non second order neighbor'' cities. Column 5 uses the rematched sample described above. Samples' periods are all from 1998 to 2007. }\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+\newpage
+
+
+\begin{center}
+Table 10 Spillover Effects: Transfer \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{4}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{Transfer}\\
+\hline
+Neighborcity\(\times\)D03        &      7540.7\sym{**}   &   11639.6\sym{***}&          -7148.8  &   \\
+            &    (3670.4)         &    (3693.4)  &      (6724.6)               &      \\
+[1em]
+Neighborcity2\(\times\)D03    &    &    &  &    7919.8  \\
+          &                   &     &      &       (6179.0)  \\
+[1em]
+Revenue &      0.0248         &      0.0192        &      0.0161            &        0.0244        \\
+            &    (0.0257)         &    (0.0250)    &    (0.0267)         &   (0.0237)        \\
+[1em]
+GDP per capita &      -0.935\sym{***}&      -0.846\sym{***} &      -0.812\sym{***} &       -1.094\sym{*** }\\
+            &     (0.308)         &     (0.290)     &     (0.303)         &     (0.308)         \\
+[1em]
+Urbanrate   &    -16759.2         &    -17751.0    &    -14059.0           &    -16659.1       \\
+            &   (15462.6)         &   (15513.4)    &   (15822.1)           &    (15102.0)       \\
+[1em]
+Population  &       480.3\sym{***}&       494.6\sym{***}&       465.0\sym{***}&       542.1\sym{***}  \\
+            &     (102.9)         &     (102.5)   &     (110.6)            &      (123.0)     \\
+[1em]
+Land        &       1.103         &       1.088        &       1.082       &     2.708\sym{**}     \\
+            &     (1.395)         &     (1.414)      &     (1.377)       &      (1.311)        \\
+[1em]
+\_cons      &   -160715.7\sym{***}&   -166240.1\sym{***}&   -154997.5\sym{***}  &   -197858.0\sym{***} \\
+            &   (40321.0)         &   (40468.8)    &   (41976.5)      &   (40886.8)      \\
+\hline
+Observations       &        1925         &        1869      &        1727        &        1565         \\
+Within $R^{2}$      &       0.759         &       0.761  &       0.755         &      0.747       \\
+Two-way FE    &    Yes    &   Yes   & Yes    &   Yes   \\
+Clustered at     &        City         &        City    & City     &        City       \\
+\hline\hline
+\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{5}{p{10.8cm}}{\footnotesize This table investigates spillover in earmark transfer by regressing transfer on the interaction term of a policy dummy (differing in each column) and D03. Results in Column 1 are from the regression of transfer on interacted Neighborcity (a dummy that equals to 1 if the city is a geographically neighboring one to cities producing ministers) and D03, as well as some controls. It investigates the ``first-order spillover effects''. In Column 2 we exclude neighbor cities that are not located within the same province as ministers' home cities. Column 3 keeps neighbor cities that are not located within the same province as ministers' home cities and excludes same-province neighbor cities. In Column 4 we regress transfer on interacted Neighborcity2 (a dummy that equals to 1 if the city is a geographically neighboring one to cities whose Neighborcity equals to 1) and D03 as well as controls. The ``second-order'' neighbor cities which are not in the same province as ministers' home cities are excluded in Column 4. City and year fixed effects are controlled in all regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. Column 1, 2 and 3 uses PSM sample of ``neighbor-non neighbor'' cities. Column 4 uses PSM sample of ``second order neighbor-non second order neighbor'' cities. Samples' periods are all from 1998 to 2007. }\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+
+
+\newpage
+
+\begin{center}
+Table 11 Spillover Effects: Spending and Multiplier \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}\\
+\hline
+$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$     &       1.203\sym{**} &      1.272\sym{**} \\
+            &     (0.571)         &     (0.523)         \\
+[1em]
+$\rm \frac{ \widetilde{G}_{t}-\widetilde{G}_{t-1}}{GDP_{t-1}}$  &     -0.0598         &      -0.493      \\
+            &     (0.484)         &   (0.565)  \\
+\hline
+Observations       &        1609         &         1561         \\
+IV         & ${\rm Neighborcity \times D03}$   &  ${\rm Neighborcity \times D03}$         \\
+         &    ${\rm Neighborcity \times Tenure_{t-2002}^2}$   &    ${\rm Neighborcity \times Tenure_{t-2002}^2}$  \\
+           &      $\rm Transfer_{t-1}$     &     $\rm Transfer_{t-1}$  \\
+Two-way FE    &   Yes   & Yes          \\
+City-level Controls &   Yes         &  Yes        \\
+K-P rk LM Stat P-value        &  0.00000324         &    0.00000827          \\
+K-P rk Wald F Statistic     &       28.59         &    32.80        \\
+Hansen J Stat P-value        &       0.399         &      0.951          \\
+Clustered at    &        City       &        City        \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{12cm}}{\footnotesize This table investigates spillover in government spending and the fiscal multiplier of single neighbor cities using the PSM sample of ``single neighbor-non single neighbor'' cities. Single neighbor cities are defined as cities which are geographical neighbors to a single home city of minister. In Column 1 we regress GDP growth on local GDP-adjusted difference of local spending, local GDP-adjusted difference of nearby home city's spending and some control variables. The local GDP-adjusted difference of local spending is instrumented by 3 IVs, where \(\rm Neighborcity \) is already defined in previous tables and \(\rm Tenure_{t-2002}^2\) are the \(\rm Tenure_{t-2002}^2 \) of minister's home city's which the neighbor city locates next to. Column 2 excludes single neighbor cities that are not within the same province as ministers' home cities. City and year fixed effects are controlled in both regressions and a set of city-level control variables are also included. For each regression, the table reports number of observations, IV, K-P rk LM Statistic P-value, K-P rk Wald F Statistic, Hansen J Statistic P-value and cluster level of robust standard errors. The sample period is from 1998 to 2007.}\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+
+\newpage
+
+\begin{figure}[htb]
+\centering
+Figure 1: Years in Position\\
+\includegraphics[scale=0.7]{Yearsinposition}
+\caption{This figure shows the distribution of years in position of all 18 ministers listed in Table 1. The typical term of a minister is 5 years. }
+\end{figure}
+
+\newpage
+
+
+\begin{figure}[htb]
+\centering
+Figure 2: Estimated Coefficient of Minister\(\times\)DXX Dummies with 95\% Confidence Intervals
+\includegraphics[scale=0.7]{TransferCI}
+\caption{This figure plots the point estimate and 95\% confidence Intervals of estimated coefficient of Minister\(\times\)TD dummies from the regressions of earmarked transfer (${\rm Transfer}$) on them, as well as some city-level control variables.}
+\end{figure}
+
+
+
+\newpage
+
+
+\begin{figure}[htb]
+\centering
+Figure 3: Heihe-Tengchong Line
+\includegraphics[scale=0.5]{Heihe-Tengchong}
+\caption{This figure plots the Heihe-Tengchong Line, which separates the more and less populated regions of China. The line was firstly proposed by geographical scientist Hu Huanyong in 1935 and has enjoyed great recognition and popularity in social science studies since then. The 2019 Map of China is retrieved from the Standardized Map Service System of Chinese Ministry of Natural Resources at http://bzdt.ch.mnr.gov.cn/index.html.}
+\end{figure}
+
+\newpage
+
+
+\begin{center}
+Appendix Table 1 Ministerial Effect on Government Spending\\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{\(\rm \ln{G}  \)}&\multicolumn{1}{c}{\(\rm \ln{G}  \)}\\
+\hline
+Minister$\times$D03       &      0.0845\sym{*}  &      0.0877\sym{*}  \\
+            &    (0.0457)         &    (0.0459)         \\
+[1em]
+GDP per capita &      0.0540\sym{***}&      0.0637\sym{***}\\
+            &    (0.0119)         &    (0.0219)         \\
+[1em]
+urbanrate   &      -0.119         &      -0.184         \\
+            &     (0.172)         &     (0.177)         \\
+[1em]
+population      &       1.099         &       1.199\sym{*}  \\
+(10 people)             &     (0.710)         &     (0.721)         \\
+[1em]
+land       &      0.0198         &      0.0188         \\
+(${\rm 10^{-4} \, km^{2}}$)               &    (0.0409)         &    (0.0409)         \\
+[1em]
+revenue  &    0.000688         &    0.000338         \\
+(1 RMB)
+            &   (0.00104)         &   (0.00119)         \\
+[1em]
+\_cons      &       11.21\sym{***}&       11.21\sym{***}\\
+            &     (0.275)         &     (0.285)         \\
+\hline
+Observations      &        1725         &        1658         \\
+Within $R^{2}$       &       0.960         &       0.960         \\
+Two-way FE   &   Yes       &    Yes                \\
+Clustered at   &        City         &        City      \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{6.5cm}}{\footnotesize This table investigates ministerial effect on government spending. Presented in Column 1 are results from regressing city-level log government spending (\(\rm \ln{G}  \)) on an interaction term of Minister and D03, as well as GDP per capita, urbanization rate (urbanrate), population, administrative area (land) and revenue. Column 2 are results from estimating the equation without provinces located west of the Heihe-Tengchong Line. These provinces are Xinjiang, Tibet, Inner Mongolia, Qinghai, Gansu and Ningxia. City and year fixed effects are controlled in both regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The sample period is from 1998 to 2007. }\\
+\end{tabular}
+}
+
+\end{scriptsize}
+\end{center}
+
+
+
+\newpage
+\begin{center}
+Appendix Table 2 Ministerial Effect on Government Spending: Dynamics \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{\(\rm \ln{G}  \)}&\multicolumn{1}{c}{\(\rm \ln{G}  \)}\\
+\hline
+Minister\(\times\)TD98       &     -0.0519           &     -0.0563         \\
+            &    (0.0623)             &    (0.0630)         \\
+[1em]
+Minister\(\times\)TD99       &     -0.0377         &     -0.0423         \\
+            &    (0.0513)             &    (0.0521)         \\
+[1em]
+Minister\(\times\)TD00       &     -0.0191         &     -0.0205         \\
+            &    (0.0271)             &    (0.0272)         \\
+[1em]
+Minister\(\times\)TD01       &     0.00733           &     0.00726         \\
+            &    (0.0173)            &    (0.0173)         \\
+[1em]
+Minister\(\times\)TD03       &      0.0558\sym{**}      &      0.0559\sym{**} \\
+            &    (0.0273)          &    (0.0274)         \\
+[1em]
+Minister\(\times\)TD04       &      0.0803\sym{***}&   0.0814\sym{***}\\
+            &    (0.0286)            &    (0.0289)         \\
+[1em]
+Minister\(\times\)TD05       &      0.0957\sym{***}  &      0.0976\sym{***}\\
+            &    (0.0335)              &    (0.0340)         \\
+[1em]
+Minister\(\times\)TD06       &      0.0490        &      0.0495         \\
+            &    (0.0368)           &    (0.0377)         \\
+[1em]
+Minister\(\times\)TD07       &      0.0377           &      0.0399         \\
+            &    (0.0414)         &    (0.0413)         \\
+[1em]
+\_cons      &       11.21\sym{***}&        11.21\sym{***}\\
+            &     (0.275)             &     (0.285)         \\
+City-level Controls &      Yes        &     Yes    \\
+\hline
+Observations        &        1725         &        1658         \\
+Within $R^{2}$        &       0.960           &       0.960         \\
+Two-way FE    &  Yes                   &      Yes \\
+Clustered at   &        City         &        City         \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{6.4cm}}{\footnotesize This table investigates dynamics of ministerial effect by regressing log government spending (\(\rm \ln{G}  \)) on the interaction term of Minister and a series of year dummies (TD), as well as some city-level control variables using PSM samples. The year dummies equal to 1 in their respective years and equal to 0 otherwise (e.g. TD03 equals to 1 only in 2003). In Column 1 we regress transfer on interacted Minister and TDs as well as city-level controls. By observing the changes in the magnitude of $\beta_{1}$ (the coefficient of Minister\(\times\)TDs), a reversed U trend can be captured and we plot it in Appendix Figure 1. In Column 2 we exclude provinces located west of the Heihe-Tengchong Line. These provinces are Xinjiang, Tibet, Inner Mongolia, Qinghai, Gansu and Ningxia. City and year fixed effects are controlled in both regressions. For each regression, the table reports number of observations, Within $R^{2}$, and cluster level of robust standard errors. The table uses the PSM sample of ``minister-non minister'' cities and the sample period is from 1998 to 2007. }\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+\newpage
+\begin{center}
+Appendix Table 3 PSM Robustness: Major Results \\
+\medskip
+\begin{scriptsize}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+            &\multicolumn{1}{c}{Transfer}&\multicolumn{1}{c}{$\rm \frac{ GDP_{t}-GDP_{t-1}}{GDP_{t-1}}$}\\
+\hline
+Minister$\times$D03        &     14414.9\sym{**} &                     \\
+            &    (5565.7)         &                     \\
+[1em]
+$\rm \frac{ G_{t}-G_{t-1}}{GDP_{t-1}}$   &                     &       1.427\sym{**} \\
+            &                     &     (0.724)         \\
+\hline
+Observations         &        1722         &        1509         \\
+Within $R^{2}$         &       0.757         &                     \\
+IV         &         &  ${\rm Minister \times D03}$         \\
+       &        &    ${\rm Minister \times Tenure_{t-2002}^2}$       \\
+        &            &     $\rm Transfer_{t-1}$         \\
+Two-way FE    &   Yes   & Yes      \\
+City-level Controls &   Yes         &  Yes                \\
+K-P rk LM Stat P-value         &                     &     0.00122         \\
+K-P rk Wald F Statistic    &                     &       14.40         \\
+Hansen J Stat P-value       &                     &       0.931         \\
+Clustered at    &        City         &        City         \\
+\hline\hline
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{3}{p{8.5cm}}{\footnotesize This table reports two major results of the paper using a different PSM sample as a robustness check to our matching methods. The original PSM sample used in the paper employs 1-nearest neighbor matching within calliper i.e. a 1 to 1 matching approach. In the this table we switch to 2-nearest neighbor matching within calliper i.e. a 1 to 2 matching approach. Before matching we also exclude Minister of Commerce from the sample. The results of 1 to 3 and 1 to 4 matching are almost identical to the 1 to 2 case and are therefore omitted here. It is worth noting that we also tried applying a smaller calliper (0.01) to our matching process and the results are presented in Column 4 of Table 3 and Column 5 of Table 6, respectively. In this table, Column 1 investigates ministerial effect on earmark transfer using DID approach, originally presented in Column 1 of Table 3. Column 2 estimates local fiscal multiplier using IV approach, originally in Column 1 of Table 6. City and year fixed effects are controlled in both regressions and a set of city-level control variables are also included. For each regression, the table reports number of observations, some important statistics and cluster level of robust standard errors. The sample period is from 1998 to 2007.}\\
+\end{tabular}
+}
+\end{scriptsize}
+\end{center}
+
+
+
+\newpage
+
+\begin{figure}[htb]
+\centering
+Figure 4: Estimated Coefficient of Minister\(\times\)TDs with 95\% Confidence Intervals
+\includegraphics[scale=0.7]{SpendingCI}
+\caption{This figure plots the point estimate and 95\% confidence Intervals of estimated coefficient of Minister\(\times\)TD dummies from the regressions of log government spending (\(\rm \ln{G}  \)) on them, as well as some city-level control variables.}
+\end{figure}
+
+
+
+
+
+
+
+
+\end{document}
