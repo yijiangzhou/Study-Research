@@ -497,6 +497,52 @@ nkids <- laply(bigfamily,length)
 names(nkids) <- names(bigfamily)
 
 
+#Parallel Computing and ggplot2####
+
+library(plyr); library(foreach); library(doParallel)
+
+#自己写一个示例函数
+cap <- function(n){
+  x <- rnorm(n,mean = 0)
+  z <- qnorm(.95,mean = 0)
+  out <- mean(x > z)
+  return(out)
+}
+result <- cap(1000)
+
+#使用4个CPU
+registerDoParallel(4)
+pts0 <- Sys.time()
+result <- foreach(1:500,.combine = c) %dopar% {
+  cap(1000000)
+}
+pts1 <- Sys.time() - pts0
+cat("Parallel loop takes",pts1,"seconds\n.")
+cat("Empirical probablity of x falling in upper 5% quantile is",mean(result))
+
+#使用单个CPU
+pts0 <- Sys.time()
+result <- foreach(1:500,.combine = c) %do% {
+  cap(1000000)
+}
+pts1 <- Sys.time() - pts0
+cat("Parallel loop takes",pts1,"seconds\n.")
+cat("Empirical probablity of x falling in upper 5% quantile is",mean(result))
+#当循环次数低，且每次循环计算量大时，多个CPU同时计算效果最好！
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
