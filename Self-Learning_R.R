@@ -517,7 +517,7 @@ result <- foreach(1:500,.combine = c) %dopar% {
   cap(1000000)
 }
 pts1 <- Sys.time() - pts0
-cat("Parallel loop takes",pts1,"seconds\n.")
+cat("Parallel loop takes",pts1,"seconds\n")
 cat("Empirical probablity of x falling in upper 5% quantile is",mean(result))
 
 #使用单个CPU
@@ -526,26 +526,118 @@ result <- foreach(1:500,.combine = c) %do% {
   cap(1000000)
 }
 pts1 <- Sys.time() - pts0
-cat("Parallel loop takes",pts1,"seconds\n.")
+cat("Parallel loop takes",pts1,"seconds\n")
 cat("Empirical probablity of x falling in upper 5% quantile is",mean(result))
 #当循环次数低，且每次循环计算量大时，多个CPU同时计算效果最好！
 
+#本部分使用教材为《R语言实战》
+library(ggplot2); library(car)
+
+ggplot(data = mtcars, aes(x = wt,y=mpg)) +
+  geom_point() + #画散点图
+  labs(title = "Automobile Data",x = "Weight",y = "Miles per gallon") #添加注释
+
+ggplot(data = mtcars, aes(x = wt,y=mpg)) +
+  geom_point(pch=17,color="blue",size=2) + #pch=17表示用三角形代表数据点
+  geom_smooth(method = "lm",color = "red",linetype=2) +#OLS拟合线及95%置信区间（默认）
+  labs(title = "Automobile Data",x = "Weight",y = "Miles per gallon")
+
+#使用geom不同选项绘图，详见表19.2
+data(singer,package = "lattice")
+ggplot(singer,aes(x=height)) + geom_histogram() #直方图
+ggplot(singer,aes(x=voice.part,y=height)) + geom_boxplot() #箱线图
+
+#geom自带的各种选项，详见表19.3
+data = (Salaries)
+ggplot(Salaries,aes(x=rank,y=salary)) +
+  geom_boxplot(fill = "cornflowerblue",
+               color = "black",notch=TRUE) +
+  geom_point(position = "jitter",color = "blue",alpha = .5) +
+  geom_rug(side = "1",color = "black")
 
 
+#同图分组：aes()
+#1.以学术等级rank分组，考察salary的分布
+ggplot(data = Salaries,aes(x=salary,fill=rank)) + #对rank着色
+  geom_density(alpha=.3) #设置透明度
+
+#2.以性别和学术等级分组，考察salary与years since phd的关系
+ggplot(Salaries,aes(x=yrs.since.phd,y=salary,color=rank,shape=sex)) +
+  geom_point() #可见，rank通过color来区分，shape通过sex来区分
+
+#3.不同rank的性别构成
+ggplot(Salaries,aes(x=rank,fill=sex)) +
+  geom_bar(position="dodge") + labs(title = "Number of Professors")
 
 
+#分组并排图：facet_wrap() and facet_grid()
+#1.各声部歌手身高的分布
+data(singer,package = "lattice")
+ggplot(data = singer,aes(x=height)) +
+  geom_histogram() +
+  facet_wrap(~voice.part,nrow=4) #行数为4
 
+#2.以性别和学术等级分组，考察salary与years since phd的关系
+ggplot(Salaries,aes(x=yrs.since.phd,y=salary,color=rank,shape=sex)) +
+  geom_point() + facet_grid(.~sex)
 
+#3.kernel density
+ggplot(data = singer,aes(x=height,fill=voice.part)) +
+  geom_density() +
+  facet_grid(voice.part~.)
 
+#添加光滑曲线：geom_smooth
+#1.使用smooth拟合
+ggplot(Salaries,aes(x=yrs.since.phd,y=salary))+ 
+  geom_smooth() + geom_point() #geom_smooth的选项中有多种平滑函数供选择，如lm、glm
+#smooth、rlm等，默认为smooth
 
+#2.按性别拟合二次多项式回归
+ggplot(Salaries,aes(x=yrs.since.phd,y=salary,
+                   linetype=sex,shape=sex,color=sex)) +
+  geom_smooth(method = lm,formula = y~poly(x,2),se=FALSE,size=1) +
+  #formula = y~poly(x,2)表示使用二次多项式拟合，se=FALSE表示不显示置信区间
+  geom_point(size=2)
 
+#自定义图表外观
+#1.坐标轴
+ggplot(data=Salaries, aes(x=rank, y=salary, fill=sex)) +
+  geom_boxplot() +
+  scale_x_discrete(breaks=c("AsstProf", "AssocProf", "Prof"),
+                   labels=c("Assistant\nProfessor", #/n表示空行
+                            "Associate\nProfessor",
+                            "Full\nProfessor")) +
+  scale_y_continuous(breaks=c(50000, 100000, 150000, 200000),
+                     labels=c("$50K", "$100K", "$150K", "$200K")) +
+  labs(title="Faculty Salary by Rank and Sex", x="", y="")
 
+#2.图例
+ggplot(data=Salaries, aes(x=rank, y=salary, fill=sex)) +
+  geom_boxplot() +
+  scale_x_discrete(breaks=c("AsstProf", "AssocProf", "Prof"),
+                   labels=c("Assistant\nProfessor", #/n表示空行
+                            "Associate\nProfessor",
+                            "Full\nProfessor")) +
+  scale_y_continuous(breaks=c(50000, 100000, 150000, 200000),
+                     labels=c("$50K", "$100K", "$150K", "$200K")) +
+  labs(title="Faculty Salary by Rank and Gender",
+       x="", y="", fill="Gender") +
+  theme(legend.position=c(.1,.8)) #图例的位置
 
+#3.使用标尺绘制泡泡图
+ggplot(mtcars, aes(x=wt, y=mpg, size=disp)) + #size生成连续变量disp的标尺，并控制泡泡大小
+  geom_point(shape=21, color="black", fill="cornsilk") +
+  labs(x="Weight", y="Miles Per Gallon",
+       title="Bubble Chart", size="Engine\nDisplacement")
 
+#4.主题：设计自己的主题（详见教材）
 
-
-
-
+#5.组合多个ggplot2图
+p1 <- ggplot(data=Salaries, aes(x=rank)) + geom_bar()
+p2 <- ggplot(data=Salaries, aes(x=sex)) + geom_bar()
+p3 <- ggplot(data=Salaries, aes(x=yrs.since.phd, y=salary)) + geom_point()
+library(gridExtra)
+grid.arrange(p1, p2, p3, ncol=3)
 
 
 
