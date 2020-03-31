@@ -3,6 +3,7 @@
 
 use oecddata.dta,clear
 
+
 //a.Mean and sd. of GDP and unemployment rate
 
 sort ctry year
