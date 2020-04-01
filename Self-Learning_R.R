@@ -640,6 +640,71 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, ncol=3)
 
 
+#Chapter 11 Dates and Times ####
+
+(now_ct <- Sys.time()) #posixct格式适合用来存储和计算时间
+(now_lt <- as.POSIXlt(now_ct)) #posixlt适合用来提取time component
+
+unclass(now_lt)
+now_lt$sec #提取seconds
+
+(now_date <- as.Date(now_ct)) #显示日期
+unclass(now_date) #日期计数，开始于1970年
+
+#使用strptime将字符串转为日期
+time_str <- c(
+  "20:17:40 04/09/1997",
+  "15:12:00 11/30/2000",
+  "11:10:02 12/05/2003",
+  "18:00:00 09/27/2015"
+) #这是用字符串形式储存的时间
+
+(time_lt <- strptime(
+  time_str,
+  "%H:%M:%S %m/%d/%Y",
+  tz = "" #留空表示使用本地时区，引号里写UTC表示使用标准时间
+))
+
+#使用strftime将时间转为字符串
+strftime(now_ct,"It's %I:%M%p on %A %d %B, %Y.")
+# %I显示12小时制时间，%p为PM/AM indicator，%A为周几，%B为月份，%Y为年
+
+#时间和日期的计算
+now_ct+86400 #86400秒=1天
+now_date+1 #同样的功能
+
+(dayswcathy <- as.Date(Sys.time())-as.Date("2017-10-21"))
+difftime(as.Date(Sys.time()),as.Date("2017-10-21"),units = "secs") #哈哈哈
+
+#使用seq产生间隔时间
+seq(as.Date("2017-10-21"),as.Date(Sys.time()),by = "10 days")
+
+#lubridate包
+library(lubridate)
+?lubridate
+
+(duration_one_to_four_years <- dyears(1:4))
+today()+duration_one_to_four_years
+
+(period_one_to_four_years <- years(1:10))
+today()+period_one_to_four_years
+
+#使用lubridate包中的dmy ymd mdy等等来识别日期
+x <- ymd(20190125)-ymd(20190122)
+y <- ymd(20190124)-ymd(20190121)
+as.numeric(x)-as.numeric(y)
+
+#临时用####
+
+words <- c("exp_tot","exp_invest","exp_agrforwat",
+           "exp_edu","exp_socsec","exp_adm","exp_jud","exp_other")
+
+wordsr <-c("expr_tot","expr_invest","expr_agrforwat",
+           "expr_edu","expr_socsec","expr_adm","expr_jud","expr_other")
+
+for (i in 1:length(wordsr)){
+  message("xtreg ",wordsr[i], " ivf revenue_real gdpper_real urbanrate /// ")
+}
 
 
 
