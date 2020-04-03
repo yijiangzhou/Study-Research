@@ -10,6 +10,8 @@ dataset <- read_xlsx("within_city.xlsx") #Chinese words are displayed correctly
 
 #b.Lunar dates ####
 
+library(plyr)
+
 templist <- strptime(dataset$date,"%Y%m%d",tz="UTC") #Converting string date 
 #to formated date that R can process
 tempdf <- data.frame(date_fmt = templist)
