@@ -50,30 +50,11 @@ for (i in 1:length(dataset$date_fmt)){
 #lunar year 2020
 remove(i)
 
-
-test <- data.frame(
-  player = c(rep("a",4),rep("b",4)),
-  timer = c(rep(c(1,2),2)),
-  score = 1:8
-)
-
-test$ratio <- rep(0,length(test$timer))
-for (i in 1:length(test$timer)){
-  for (j in 1:length(test$timer)){
-    if (i > j & test$timer[i] == test$timer[j] 
-        & test$player[i] == test$player[j]){
-      test$ratio[i] <- test$score[i] / test$score[j]
-    }
-  }
-}
-
-
-
-
-
-
-
-
+tempdf <- dataset[c(1,6)]
+panel <- unique.data.frame(tempdf) #Drop duplicated city-lunarday
+#observations and form a new panel dataset
+remove(tempdf)
+panel <- arrange(panel,lunarday)
 
 
 
