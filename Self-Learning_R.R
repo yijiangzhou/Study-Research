@@ -694,6 +694,7 @@ x <- ymd(20190125)-ymd(20190122)
 y <- ymd(20190124)-ymd(20190121)
 as.numeric(x)-as.numeric(y)
 
+
 #ÁÙÊ±ÓÃ####
 
 words <- c("exp_tot","exp_invest","exp_agrforwat",
