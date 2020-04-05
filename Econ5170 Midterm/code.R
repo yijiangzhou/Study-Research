@@ -58,8 +58,23 @@ panel <- unique.data.frame(tempdf) #Drop duplicated city-lunarday
 remove(tempdf)
 panel <- arrange(panel,lunarday)
 
+df_index19 <- subset(dataset,lunaryear == 2019,
+                   select = c(city,lunarday,trip_index))
+df_index20 <- subset(dataset,lunaryear == 2020,
+                   select = c(city,lunarday,trip_index))
+panel <- merge(panel,df_index19,
+               by = c("city","lunarday"),all = FALSE)
+names(panel)[3] = "index19"
+panel <- merge(panel,df_index20,
+               by = c("city","lunarday"),all = FALSE)
+names(panel)[4] = "index20" #Extract trip index of each
+#city in 2019 and 2020 and merge them into the panel dataset
 
+remove(df_index19,df_index20)
+panel <- transform(panel,
+                   y = index20/index19) #Generate y
 
+panel <- arrange(panel,city,lunarday)
 
 
 
