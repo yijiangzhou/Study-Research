@@ -8,7 +8,7 @@ library(readxl)
 dataset <- read_xlsx("within_city.xlsx") #Chinese words are displayed correctly
 
 
-#b.Lunar dates ####
+#b.Lunar Dates ####
 
 library(plyr)
 
@@ -77,11 +77,40 @@ panel <- transform(panel,
 panel <- arrange(panel,city,lunarday)
 
 
+#c.Plots ####
 
+library(ggplot2)
 
+dfplot <- subset(panel,city == "兰州" | city == "银川" 
+              | city == "西安" | city == "太原" | city == "石家庄" 
+              | city == "北京" | city == "天津" | city == "成都" 
+              | city == "重庆" | city == "武汉" | city == "合肥" 
+              | city == "南京" | city == "昆明" | city == "贵阳" 
+              | city == "长沙" | city == "南昌" | city == "杭州" 
+              | city == "福州" | city == "南宁" | city == "广州",
+              select = c(city,lunarday,y))
+df_engname <- data.frame(
+  city = c("兰州","银川","西安","太原","石家庄","北京","天津",
+           "成都","重庆","武汉","合肥","南京","昆明","贵阳",
+           "长沙","南昌","杭州","福州","南宁","广州"),
+  engname = c("Lanzhou","Yinchuan","Xi'an","Taiyuan",
+              "Shijiazhuang","Beijing","Tianjin","Chengdu",
+              "Chongqing","Wuhan","Hefei","Nanjing","Kunming",
+              "Guiyang","Changsha","Nanchang","Hangzhou","Fuzhou",
+              "Nanning","Guangzhou")) #Add English names cities so 
+#that ggplot2 can properly display plot labels
 
+dfplot <- merge(dfplot,df_engname,by = c("city"),all = FALSE)
 
+dfplot <- arrange(dfplot,engname,lunarday)
 
+ggplot(data = dfplot,aes(x=lunarday,y=y)) +
+  geom_line() +
+  labs(title = "Trip Index Ratio of Selected Capital Cities",
+       x="Lunar Day",y="Trip Index Ratio") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  facet_wrap(~engname,nrow=5) #Plots are arranged according to
+#the alphabetic order of cities
 
 
 
