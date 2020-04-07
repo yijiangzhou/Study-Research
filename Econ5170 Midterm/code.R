@@ -115,7 +115,7 @@ print(p1)
 pdf("trip_index_ratio.pdf",paper = "a4r",
     width = 11.69,height = 8.27)
 p1
-dev.off()
+dev.off() #Save the image to PDF format
 
 
 
