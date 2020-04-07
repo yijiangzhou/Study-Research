@@ -18,38 +18,34 @@ tempdf <- data.frame(date_fmt = templist)
 dataset <- cbind(dataset,tempdf) #Append dataset with newly-generated dates
 remove(templist,tempdf)
 
-dataset$lunaryear <- rep(0,length(dataset$date_fmt))
-for (i in 1:length(dataset$date_fmt)){
-  if (as.Date(dataset$date_fmt[i]) 
-      >= as.Date("2020-01-25")){
-    dataset$lunaryear[i] = 2020
-  } else if (as.Date(dataset$date_fmt[i]) 
-            >= as.Date("2019-02-05")){
-    dataset$lunaryear[i] = 2019
-  } else{
-    dataset$lunaryear[i] = 2018
-  }
-} #lunaryear indicates which lunar year the date is in
-remove(i)
-
 dataset$lunarday <- rep(0,length(dataset$date_fmt))
 for (i in 1:length(dataset$date_fmt)){
   if (as.Date(dataset$date_fmt[i]) 
-      >= as.Date("2020-01-25")){
+      >= as.Date("2020-01-01")){
     dataset$lunarday[i] = as.numeric(as.Date(dataset$date_fmt[i])
                                   - as.Date("2020-01-24"))
-  } else if (as.Date(dataset$date_fmt[i]) 
-             >= as.Date("2019-02-05")){
-    dataset$lunarday[i] = as.numeric(as.Date(dataset$date_fmt[i])
-                                  - as.Date("2019-02-04"))
   } else{
     dataset$lunarday[i] = as.numeric(as.Date(dataset$date_fmt[i])
-                                  - as.Date("2018-02-15"))
+                                  - as.Date("2019-02-04"))
   }
-} #Calculate lunar dates with 2018-02-16 as the first day
-#of lunar year 2018, 2019-02-05 as the first day of 
-#lunar year 2019, and 2020-01-25 as the first day of 
-#lunar year 2020
+} #Calculate lunar dates with 2019-02-05 as the first day of 
+#lunar year 2019, and 2020-01-25 as the first day of lunar 
+#year 2020. Solar calendar dates before 2019-02-05 are still 
+#viewed as in lunar year 2019 but their values in lunarday
+#are non-positve. Similar goes for solar dates after 2019-12-31 and 
+#before 2020-01-25 so please don't be surprised to see some 
+#negative values in lunarday
+remove(i)
+
+dataset$lunaryear <- rep(0,length(dataset$date_fmt))
+for (i in 1:length(dataset$date_fmt)){
+  if (as.Date(dataset$date_fmt[i]) 
+      >= as.Date("2020-01-01")){
+    dataset$lunaryear[i] = 2020
+  } else{
+    dataset$lunaryear[i] = 2019
+  }
+} #lunaryear is defined according to the notes above
 remove(i)
 
 tempdf <- dataset[c(1,6)]
@@ -102,6 +98,7 @@ df_engname <- data.frame(
 
 dfplot <- merge(dfplot,df_engname,by = c("city"),all = FALSE)
 dfplot <- arrange(dfplot,engname,lunarday)
+remove(df_engname)
 
 p1 <- ggplot(data = dfplot,aes(x=lunarday,y=y)) +
   geom_line() +
@@ -116,6 +113,27 @@ pdf("trip_index_ratio.pdf",paper = "a4r",
     width = 11.69,height = 8.27)
 p1
 dev.off() #Save the image to PDF format
+
+
+#d.Panel Data Regressions
+
+library(plm)
+panel <- pdata.frame(panel,index = c("city","lunarday"))
+
+panel$lagy <- lag(panel$y,k=1) # Generate lagged y
+
+for (i in 1:length(dataset$date)){
+  if (dataset$city[i] == "±±¾©" &
+      dataset$date[i] == 20200123){
+    message("2020-01-23 is lunar day ",dataset$lunarday[i],
+            " of lunar year ",dataset$lunaryear[i],".")
+  }
+} #To check which lunar day it is on 2020-01-23
+#This task can be done by human easily and doesn't require
+#a for loop. I just write it for fun
+remove(i)
+
+
 
 
 
