@@ -97,7 +97,7 @@ df_engname <- data.frame(
               "Shijiazhuang","Beijing","Tianjin","Chengdu",
               "Chongqing","Wuhan","Hefei","Nanjing","Kunming",
               "Guiyang","Changsha","Nanchang","Hangzhou","Fuzhou",
-              "Nanning","Guangzhou")) #Add English names cities so 
+              "Nanning","Guangzhou")) #Add English names to cities so 
 #that ggplot2 can properly display plot labels
 
 dfplot <- merge(dfplot,df_engname,by = c("city"),all = FALSE)
