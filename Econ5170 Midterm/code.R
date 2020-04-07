@@ -48,7 +48,7 @@ for (i in 1:length(dataset$date_fmt)){
 } #lunaryear is defined according to the notes above
 remove(i)
 
-tempdf <- dataset[c(1,6)]
+tempdf <- dataset[c("city","lunarday")]
 panel <- unique.data.frame(tempdf) #Drop duplicated city-lunarday
 #observations and form a new panel dataset
 remove(tempdf)
