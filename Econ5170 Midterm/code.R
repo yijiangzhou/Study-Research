@@ -101,16 +101,23 @@ df_engname <- data.frame(
 #that ggplot2 can properly display plot labels
 
 dfplot <- merge(dfplot,df_engname,by = c("city"),all = FALSE)
-
 dfplot <- arrange(dfplot,engname,lunarday)
 
-ggplot(data = dfplot,aes(x=lunarday,y=y)) +
+p1 <- ggplot(data = dfplot,aes(x=lunarday,y=y)) +
   geom_line() +
   labs(title = "Trip Index Ratio of Selected Capital Cities",
        x="Lunar Day",y="Trip Index Ratio") +
   theme(plot.title = element_text(hjust = 0.5)) +
   facet_wrap(~engname,nrow=5) #Plots are arranged according to
 #the alphabetic order of cities
+print(p1)
+
+pdf("trip_index_ratio.pdf",paper = "a4r",
+    width = 11.69,height = 8.27)
+p1
+dev.off()
+
+
 
 
 
