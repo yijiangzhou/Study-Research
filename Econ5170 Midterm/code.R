@@ -115,7 +115,7 @@ p1
 dev.off() #Save the image to PDF format
 
 
-#d.Panel Data Regressions
+#d.Panel Data Regressions ####
 
 library(plm)
 panel <- pdata.frame(panel,index = c("city","lunarday"))
