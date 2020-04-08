@@ -119,27 +119,46 @@ dev.off() #Save the image to PDF format
 
 library(plm)
 panel <- pdata.frame(panel,index = c("city","lunarday"))
-
-panel$lagy <- lag(panel$y,k=1) # Generate lagged y
+panel$lunarday <- as.numeric(as.character(panel$lunarday))
 
 for (i in 1:length(dataset$date)){
   if (dataset$city[i] == "±±¾©" &
       dataset$date[i] == 20200123){
     message("2020-01-23 is lunar day ",dataset$lunarday[i],
             " of lunar year ",dataset$lunaryear[i],".")
+    lockdown_lunar = dataset$lunarday[i]
   }
 } #To check which lunar day it is on 2020-01-23
 #This task can be done by human easily and doesn't require
 #a for loop. I just write it for fun
 remove(i)
 
+panel$d <- rep(0,length(panel$lunarday))
+for (i in 1:length(panel$lunarday)){
+  if (as.numeric(panel$lunarday[i]) > lockdown_lunar){
+    panel$d[i] = 1
+  }
+}
+remove(i)
+panel$lagy <- lag(panel$y,k=1)
+panel <- transform(panel,
+                   dlagy = d * lagy) #Generate interaction term
 
+reg_pool <- plm(y ~ lagy + dlagy,data = panel,
+                model = "pooling")
+summary(reg_pool) #Pooled regression
 
+reg_fe <- plm(y ~ lagy + dlagy,data = panel,
+              model = "within")
+summary(reg_fe) #Individual fixed effect regression
 
+reg_twoways <- plm(y ~ lagy + dlagy,data = panel,
+                   model = "within",effect = "twoways")
+summary(reg_twoways) #Two-way fixed effect regression
 
-
-
-
+pFtest(reg_fe,reg_pool) #F test of individual fixed effect
+pFtest(reg_twoways,reg_pool) #F test of two-way fiexed effect
+#Both F tests indicate that it is necessary to use FE models
 
 
 
