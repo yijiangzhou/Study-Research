@@ -5,6 +5,7 @@
 #a.Import Dataset ####
 
 library(readxl)
+
 dataset <- read_xlsx("within_city.xlsx") #Chinese words are displayed correctly
 
 
@@ -85,6 +86,7 @@ dfplot <- subset(panel,city == "兰州" | city == "银川"
               | city == "长沙" | city == "南昌" | city == "杭州" 
               | city == "福州" | city == "南宁" | city == "广州",
               select = c(city,lunarday,y))
+
 df_engname <- data.frame(
   city = c("兰州","银川","西安","太原","石家庄","北京","天津",
            "成都","重庆","武汉","合肥","南京","昆明","贵阳",
@@ -103,7 +105,8 @@ remove(df_engname)
 p1 <- ggplot(data = dfplot,aes(x=lunarday,y=y)) +
   geom_line() +
   labs(title = "Trip Index Ratio of Selected Capital Cities",
-       x="Lunar Day",y="Trip Index Ratio") +
+       x="Lunar Day (Negative Lunar Dates Enabled)",
+       y="Trip Index Ratio") +
   theme(plot.title = element_text(hjust = 0.5)) +
   facet_wrap(~engname,nrow=5) #Plots are arranged according to
 #the alphabetic order of cities
@@ -118,6 +121,7 @@ dev.off() #Save the image to PDF format
 #d.Panel Data Regressions ####
 
 library(plm)
+
 panel <- pdata.frame(panel,index = c("city","lunarday"))
 panel$lunarday <- as.numeric(as.character(panel$lunarday))
 
@@ -152,13 +156,7 @@ reg_fe <- plm(y ~ lagy + dlagy,data = panel,
               model = "within")
 summary(reg_fe) #Individual fixed effect regression
 
-reg_twoways <- plm(y ~ lagy + dlagy,data = panel,
-                   model = "within",effect = "twoways")
-summary(reg_twoways) #Two-way fixed effect regression
-
 pFtest(reg_fe,reg_pool) #F test of individual fixed effect
-pFtest(reg_twoways,reg_pool) #F test of two-way fiexed effect
-#Both F tests indicate that it is necessary to use FE models
-
+#F test indicates that it is necessary to use FE models
 
 
