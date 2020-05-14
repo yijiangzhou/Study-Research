@@ -9,9 +9,10 @@ sigmasq = 1;
 epsi_num = 10;
 q = 3;
 [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
-% The MATLAB package Value-Function-Iteration is needed to perform Tauchen
-% method. See https://github.com/vfitoolkit/VFIToolkit-matlab for details.
-
+% The MATLAB package Value-Function-Iteration and NVIDIA CUDA toolkit are
+% needed to perform Tauchen method.See for details at
+% https://github.com/vfitoolkit/VFIToolkit-matlab
+% https://developer.nvidia.com/cuda-downloads
 %% Initialize Parameters
 a0 = 5;
 a1 = 0.1;
@@ -20,9 +21,14 @@ beta = 0.95;
 r = 0.05;
 T = 40;
 A = (1000:1000:100000);
+polyn = 4; 
+% We use 4th order polynomial approximation in the following sections. 
+
 epsi = (gather(epsi_grid))';
-% epsi_grid is an array stored in GPU.The 'gather' function is used to
-% extract epsi_grid from GPU and store it in local workspace.
+pi_epsi = gather(pi_epsi);
+% epsi_grid and pi_epsi are arrays stored in GPU.The 'gather' function is
+% used to extract them from GPU and store them in local workspace.
+
 valuef{T-1,1} = zeros(length(epsi),length(A));
 policyf_c{T-1,1} = zeros(length(epsi),length(A));
 policyf_h{T-1,1} = zeros(length(epsi),length(A));
@@ -31,12 +37,12 @@ for i = T-2:-1:1
     policyf_c{i,1} = zeros(length(epsi),length(A));
     policyf_h{i,1} = zeros(length(epsi),length(A));
 end % Initialize the value function and the policy function.
+
 lnwage_d = zeros(1,T-1);
 for t = T-1:-1:1
     lnwage_d(t) = a0 + a1 * t + a2 * (t^2);
 end % This is the deterministic part of wage at each period. 
-polyn = 4; 
-% We use 4th order polynomial approximation in the following sections. 
+
 
 %% Test: t=T-1=39
 for t = T-1:-1:1
@@ -57,7 +63,7 @@ for t = T-1:-1:1
             for i = 1:length(epsi)
                 coef(j,:) = polyfit(A,1./policyf_c{T-1}(j,:),polyn);
                 coef(j,:) = fliplr(coef(j,:));
-                % Some warining signs will pop up but they doesn't affect the
+                % Some warining signs will pop up but they don't affect the
                 % calculation. Please kindly ignore them. 
             end
         end             
