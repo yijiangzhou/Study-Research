@@ -59,12 +59,19 @@ for t = T-1:-1:1
         end
     elseif t == T-2
         coef = zeros(length(epsi),polyn+1);
+        bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
             for i = 1:length(epsi)
                 coef(j,:) = polyfit(A,1./policyf_c{T-1}(j,:),polyn);
                 coef(j,:) = fliplr(coef(j,:));
                 % Some warining signs will pop up but they don't affect the
-                % calculation. Please kindly ignore them. 
+                % calculation. Please kindly ignore them.
+                clc
+                for n = 1:polyn+1
+                    bpi(i,n) = sum(coef(:,n).*pi_epsi(j,i));
+                end
+                % Next we need to solve a complex non-linear equation.
+                % Can we use 'vpasolve'? 
             end
         end             
 %     else
