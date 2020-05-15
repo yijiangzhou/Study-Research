@@ -70,10 +70,21 @@ for t = T-1:-1:1
                 for n = 1:polyn+1
                     bpi(i,n) = sum(coef(:,n).*pi_epsi(j,i));
                 end
-                % Next we need to solve a complex non-linear equation.
-                % Can we use 'vpasolve'? 
             end
-        end             
+        end
+        tic
+        for i = 1:length(epsi)
+            for j = 1:length(A)
+                w = exp(lnwage_d(t) + epsi(i));
+                policyf_c{t}(i,j) = solveforc(bpi(i,1),bpi(i,2),bpi(i,3),...
+                    bpi(i,4),bpi(i,5),A(j),beta,r);
+                % If polyn is changed, we need to adjust the function
+                % 'solveforc' and the expression of policyf_c{t}(i,j) since
+                % they are only designed for polyn==4 case. 
+                policyf_h{t}(i,j) = (policyf_c{t}(i,j))/(2 * w);
+            end
+        end
+        toc
 %     else
 %         break
     end
