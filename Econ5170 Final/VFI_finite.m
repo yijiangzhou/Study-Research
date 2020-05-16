@@ -13,6 +13,7 @@ q = 3;
 % needed to perform Tauchen method.See for details at
 % https://github.com/vfitoolkit/VFIToolkit-matlab
 % https://developer.nvidia.com/cuda-downloads
+
 %% Initialize Parameters
 a0 = 5;
 a1 = 0.1;
@@ -21,7 +22,7 @@ beta = 0.95;
 r = 0.05;
 T = 40;
 A = (100000:100000:10000000);
-polyn = 4; 
+polyn = 4;
 % We use 4th order polynomial approximation in the following sections. 
 
 epsi = (gather(epsi_grid))';
@@ -50,6 +51,9 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 w = exp(lnwage_d(t) + epsi(i));
+%                 if w>= 300
+%                     w = 0.7 * w;
+%                 end
                 policyf_c{t}(i,j) = (r * A(j))/(beta+0.5 * r);
                 policyf_h{t}(i,j) = (policyf_c{t}(i,j))/(2 * w);
                 valuef{t}(i,j) = log(policyf_c{t}(i,j)) - 0.5 * log(policyf_h{t}(i,j))...
@@ -75,6 +79,9 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 w = exp(lnwage_d(t) + epsi(i));
+%                 if w>= 300
+%                     w = 0.7 * w;
+%                 end
                 policyf_c{t}(i,j) = solveforc(bpi(i,1),bpi(i,2),bpi(i,3),...
                     bpi(i,4),bpi(i,5),A(j),beta,r);
                 % If polyn is changed, we need to adjust the function
