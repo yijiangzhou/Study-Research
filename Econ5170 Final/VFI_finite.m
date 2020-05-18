@@ -17,13 +17,13 @@ q = 3;
 %% Initialize Parameters
 a0 = 5;
 a1 = 0.1;
-a2 = 0.002;
+a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-A = (100000:100000:10000000);
+A = (0:10000:1000000);
 polyn = 4;
-% We use 4th order polynomial approximation in the following sections. 
+% We use 4th order polynomial approximation in the following sections.
 
 epsi = (gather(epsi_grid))';
 pi_epsi = gather(pi_epsi);
@@ -54,14 +54,14 @@ for t = T-1:-1:1
 %                 if w>= 300
 %                     w = 0.7 * w;
 %                 end
-                policyf_c{t}(i,j) = (r * A(j))/(beta+0.5 * r);
-                policyf_h{t}(i,j) = (policyf_c{t}(i,j))/(2 * w);
-                valuef{t}(i,j) = log(policyf_c{t}(i,j)) - 0.5 * log(policyf_h{t}(i,j))...
+                policyf_c{t}(i,j) = solveforc1(w,A(j),beta,r);
+                policyf_h{t}(i,j) = (w^2)/policyf_c{t}(i,j)^2;
+                valuef{t}(i,j) = log(policyf_c{t}(i,j)) - (1/1.5) * policyf_h{t}(i,j)^(1.5)...
                     + (beta/r) * log(r * (1+r) * (A(j) + w * policyf_h{t}(i,j)...
                     - policyf_c{t}(i,j)));
             end
         end
-    else %if t >= T-3
+    else %if t == T-2
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
@@ -72,7 +72,7 @@ for t = T-1:-1:1
                 % calculation. Please kindly ignore them.
                 clc
                 for n = 1:polyn+1
-                    bpi(i,n) = sum(coef(:,n).*pi_epsi(j,i));
+                    bpi(i,n) = sum(coef(:,n) .* pi_epsi(j,i));
                 end
             end
         end
@@ -82,23 +82,25 @@ for t = T-1:-1:1
 %                 if w>= 300
 %                     w = 0.7 * w;
 %                 end
-                policyf_c{t}(i,j) = solveforc(bpi(i,1),bpi(i,2),bpi(i,3),...
-                    bpi(i,4),bpi(i,5),A(j),beta,r);
+                policyf_c{t}(i,j) = solveforc2(bpi(i,1),bpi(i,2),bpi(i,3),...
+                    bpi(i,4),bpi(i,5),w,A(j),beta,r);
                 % If polyn is changed, we need to adjust the function
                 % 'solveforc' and the expression of policyf_c{t}(i,j) since
                 % they are only designed for polyn=4 case.
-                policyf_h{t}(i,j) = (policyf_c{t}(i,j))/(2 * w);
-                upperh = (2/3) * 24 * 365;
+                policyf_h{t}(i,j) = (w^2)/policyf_c{t}(i,j)^2;
+                upperh = (3/4) * 24 * 365;
                 % Set a upper bound on h. This is realistic because one
-                % cannot devote all time to work. The upper bound is 2/3 of
+                % cannot devote all time to work. The upper bound is 3/4 of
                 % a year.
                 if policyf_h{t}(i,j) >= upperh
                     policyf_h{t}(i,j) = upperh;
-                    policyf_c{t}(i,j) = policyf_h{t}(i,j) * 2 * w;
+                    policyf_c{t}(i,j) = w/sqrt(policyf_h{t}(i,j));
                 end
                 valuef{t}(i,j) = log(policyf_c{t}(i,j))...
-                    - 0.5 * log(policyf_h{t}(i,j)) + beta * mean(valuef{t+1},'all');
-                % 此处存疑，value function应该怎么算？
+                    -  (1/1.5) * policyf_h{t}(i,j)^(1.5)...
+                    + beta * discountv(t,epsi,valuef);
+                % The 'weight' is the difference of normal CDF, see the
+                % 'discountv' function.
             end
         end
     end
