@@ -15,17 +15,31 @@ destring newid year cic2 emp rk va soe,replace
 describe
 save "C:\Users\JackZHOU\Desktop\常用文件\Macro II\inddata.dta"
 
-
 //查找重复观测值，排列为panel data
 egen id=group(newid)
 sort id year
 duplicates report id year
 xtset id year
 
+//截尾前分布
+gen lgva = log(va)
+gen lgrk = log(rk)
+gen lgemp = log(emp)
+histogram lgva, bin(50) kdensity xtitle(Log of Value-add (Before Trimming)) scheme(s1color)
+histogram lgrk, bin(50) kdensity xtitle(Log of Capital (Before Trimming)) scheme(s1color)
+histogram lgemp, bin(50) kdensity xtitle(Log of Employment (Before Trimming)) scheme(s1color)
+
 //截尾，scale (using median value in the industry)
 sum va emp rk,detail
 winsor2 va emp rk,replace trim cuts(1 99) by(year)
 sum va emp rk,detail
+drop lgva lgrk lgemp
+gen lgva = log(va)
+gen lgrk = log(rk)
+gen lgemp = log(emp)
+histogram lgva, bin(50) kdensity xtitle(Log of Value-add (After Trimming)) scheme(s1color)
+histogram lgrk, bin(50) kdensity xtitle(Log of Capital (After Trimming)) scheme(s1color)
+histogram lgemp, bin(50) kdensity xtitle(Log of Employment (After Trimming)) scheme(s1color)
 
 bys year cic2: egen va_yimed=median(va)
 bys year cic2: egen emp_yimed=median(emp)
@@ -60,11 +74,9 @@ label variable lnyl "log of yl"
 sort id year
 
 //YK kernel density：所有年份一张表
-kdensity lnyk if year==2001, addplot((kdensity lnyk if year==2002) ///
-(kdensity lnyk if year==2003) (kdensity lnyk if year==2004) (kdensity lnyk if year==2005) ///
-(kdensity lnyk if year==2006) (kdensity lnyk if year==2007)) ///
+kdensity lnyk if year==2001, addplot((kdensity lnyk if year==2007)) ///
 ytitle(Kernel Density) xtitle(Log of Y/K) title("") ///
-legend(order(1 "2001" 2 "2002" 3 "2003" 4 "2004" 5 "2005" 6 "2006" 7 "2007") ///
+legend(order(1 "2001" 2 "2007") ///
 cols(4)) scheme(s1color)
 
 //YK kernel density：每年单独
@@ -83,11 +95,9 @@ ytitle(Kernel Density) xtitle(Log of Y/K: SOE) title("") ///
 legend(order(1 "2001" 2 "2007") row(1)) scheme(s1color)
 
 //YL kernel density：所有年份一张表
-kdensity lnyl if year==2001, addplot((kdensity lnyl if year==2002) ///
-(kdensity lnyl if year==2003) (kdensity lnyl if year==2004) (kdensity lnyl if year==2005) ///
-(kdensity lnyl if year==2006) (kdensity lnyl if year==2007)) ///
+kdensity lnyl if year==2001, addplot((kdensity lnyl if year==2007)) ///
 ytitle(Kernel Density) xtitle(Log of Y/L) title("") ///
-legend(order(1 "2001" 2 "2002" 3 "2003" 4 "2004" 5 "2005" 6 "2006" 7 "2007") ///
+legend(order(1 "2001" 2 "2007") ///
 cols(4)) scheme(s1color)
 
 //YL kernel density：每年单独
@@ -106,7 +116,10 @@ ytitle(Kernel Density) xtitle(Log of Y/L: SOE) title("") ///
 legend(order(1 "2001" 2 "2007") row(1)) scheme(s1color)
 
 //计算TFP
-gen tfp=((va_sc/y)^0.25)*((va_sc/rk_sc)^0.5)*((va_sc/emp_sc)^0.5)
+bys year: egen y_nsc=sum(va)
+label variable y_nsc "Aggregate Output by Year (Unscaled)"
+
+gen tfp=((va/y_nsc)^0.25)*((va/rk)^0.5)*((va/emp)^0.5)
 label variable tfp "TFPQ"
 bys year cic2: egen tfp_yimean=mean(tfp)
 label variable tfp_yimean "Year-Ind Mean TFP"
@@ -115,38 +128,29 @@ gen lntfp_idsc=ln(tfp/tfp_yimean)
 gen tfp_idsc=tfp/tfp_yimean
 label variable lntfp_idsc "Log of Industry-Scaled TFP"
 label variable tfp_idsc "Industry-Scaled TFP"
-winsor2 lntfp_idsc,trim cuts(1 99) s(tr) label //1%和99%截尾
-winsor2 tfp_idsc,trim cuts(1 99) s(tr) label //1%和99%截尾
 sort id year
 
 //TFP kernel density: 所有年份一张表
-kdensity lntfp_idsctr if year==2001, addplot((kdensity lntfp_idsctr if year==2002) ///
-(kdensity lntfp_idsctr if year==2003) (kdensity lntfp_idsctr if year==2004) ///
-(kdensity lntfp_idsctr if year==2005) (kdensity lntfp_idsctr if year==2006) ///
-(kdensity lntfp_idsctr if year==2007)) ytitle(Kernal Density) ///
-xtitle(Log of Industry-Adjuested TFP) title("") ///
-legend(order(1 "2001" 2 "2002" 3 "2003" 4 "2004" 5 "2005" 6 "2006" 7 "2007") ///
-cols(4)) scheme(s1color)
-//只看2001和2007两年
-kdensity lntfp_idsctr if year==2001, addplot((kdensity lntfp_idsctr if year==2007)) ///
+kdensity lntfp_idsc if year==2001, addplot((kdensity lntfp_idsc if year==2007)) ///
 ytitle(Kernal Density) xtitle(Log of Industry-Adjuested TFP) title("") ///
-legend(order(1 "2001" 2 "2007") cols(4)) scheme(s1color)
+legend(order(1 "2001" 2 "2007") ///
+cols(4)) scheme(s1color)
 
 //TFP kernel density: 每年单独
-histogram lntfp_idsctr, bin(50) kdensity ytitle(Kernel Density) ///
+histogram lntfp_idsc, bin(50) kdensity ytitle(Kernel Density) ///
 xtitle(Log of Industry-Adjusted TFP) legend(order(2 "Kernel Density Line")) ///
 scheme(s1color) by(year)
 
 //TFP kernel density：pooled, SOE vs private
-kdensity lntfp_idsctr, recast(area) fcolor(gs13) lcolor(gs13) ///
-addplot((kdensity lntfp_idsctr if soe==1, lcolor(red)) ///
-(kdensity lntfp_idsctr if soe==0, lcolor(navy))) ///
+kdensity lntfp_idsc, recast(area) fcolor(gs13) lcolor(gs13) ///
+addplot((kdensity lntfp_idsc if soe==1, lcolor(red)) ///
+(kdensity lntfp_idsc if soe==0, lcolor(navy))) ///
 ytitle(Kernel Density) xtitle(Log of Industry-Adjusted TFP) title("") ///
 legend(order(1 "All Firms" 2 "SOE" 3 "Private Firms") rows(1)) scheme(s1color)
 
 //TFP kernel density：SOE 2001 vs 2007
-kdensity lntfp_idsctr if soe==1 & year==2001, ///
-addplot((kdensity lntfp_idsctr if soe==1 & year==2007)) ///
+kdensity lntfp_idsc if soe==1 & year==2001, ///
+addplot((kdensity lntfp_idsc if soe==1 & year==2007)) ///
 ytitle(Kernel Density) xtitle(Log of Industry-Adjusted TFP: SOE) title("") ///
 legend(order(1 "2001" 2 "2007") rows(1)) scheme(s1color)
 
@@ -164,53 +168,51 @@ gen lnlabwed=ln(labwed)
 label variable lncapwed "Log of Capital Wedge"
 label variable lnlabwed "Log of Labor Wedge"
 sort id year
-winsor2 lncapwed,trim cuts(1 99) s(tr) label //1%和99%截尾
-winsor2 lnlabwed,trim cuts(1 99) s(tr) label //1%和99%截尾
 
 //CW kernel density：每年单独
-histogram lncapwedtr, bin(30) kdensity ytitle(Kernel Density) ///
+histogram lncapwed, bin(30) kdensity ytitle(Kernel Density) ///
 xtitle(Log of Capital Wedge) legend(order(1 "Kernel Density Line")) ///
 scheme(s1color) by(year)
 
 //CW kernel density：2001 vs 2007
-kdensity lncapwedtr if year==2001 & soe==0, lcolor(ltblue) ///
-addplot((kdensity lncapwedtr if year==2007 & soe==0, lcolor(navy)) ///
-(kdensity lncapwedtr if year==2001 & soe==1, lcolor(sand)) ///
-(kdensity lncapwedtr if year==2007 & soe==1, lcolor(red))) ///
+kdensity lncapwed if year==2001 & soe==0, lcolor(ltblue) ///
+addplot((kdensity lncapwed if year==2007 & soe==0, lcolor(navy)) ///
+(kdensity lncapwed if year==2001 & soe==1, lcolor(sand)) ///
+(kdensity lncapwed if year==2007 & soe==1, lcolor(red))) ///
 ytitle(Kernel Density) xtitle(Log of Capital Wedge) title("") ///
 legend(order(1 "Private 2001" 2 "Private 2007" 3 "SOE 2001" 4 "SOE 2007") ///
 cols(2)) scheme(s1color)
 
 //CW kernel density: pooled, SOE vs Private
-kdensity lncapwedtr, recast(area) fcolor(gs13) lcolor(gs13) ///
-addplot((kdensity lncapwedtr if soe==1, lcolor(red)) ///
-(kdensity lncapwedtr if soe==0, lcolor(navy))) ///
+kdensity lncapwed, recast(area) fcolor(gs13) lcolor(gs13) ///
+addplot((kdensity lncapwed if soe==1, lcolor(red)) ///
+(kdensity lncapwed if soe==0, lcolor(navy))) ///
 ytitle(Kernel Density) xtitle(Log of Capital Wedge) title("") ///
 legend(order(1 "All Firms" 2 "SOE" 3 "Private Firms") rows(1)) scheme(s1color)
 
 //LW kernel density：每年单独
-histogram lnlabwedtr, bin(30) kdensity ytitle(Kernel Density) ///
+histogram lnlabwed, bin(30) kdensity ytitle(Kernel Density) ///
 xtitle(Log of Labor Wedge) legend(order(1 "Kernel Density Line")) ///
 scheme(s1color) by(year)
 
 //LW kernel density：2001 vs 2007
-kdensity lnlabwedtr if year==2001 & soe==0, lcolor(ltblue) ///
-addplot((kdensity lnlabwedtr if year==2007 & soe==0, lcolor(navy)) ///
-(kdensity lnlabwedtr if year==2001 & soe==1, lcolor(sand)) ///
-(kdensity lnlabwedtr if year==2007 & soe==1, lcolor(red))) ///
+kdensity lnlabwed if year==2001 & soe==0, lcolor(ltblue) ///
+addplot((kdensity lnlabwed if year==2007 & soe==0, lcolor(navy)) ///
+(kdensity lnlabwed if year==2001 & soe==1, lcolor(sand)) ///
+(kdensity lnlabwed if year==2007 & soe==1, lcolor(red))) ///
 ytitle(Kernel Density) xtitle(Log of Labor Wedge) title("") ///
 legend(order(1 "Private 2001" 2 "Private 2007" 3 "SOE 2001" 4 "SOE 2007") ///
 cols(2)) scheme(s1color)
 
 //LW kernel density: pooled, SOE vs Private
-kdensity lnlabwedtr, recast(area) fcolor(gs13) lcolor(gs13) ///
-addplot((kdensity lnlabwedtr if soe==1, lcolor(red)) ///
-(kdensity lnlabwedtr if soe==0, lcolor(navy))) ///
+kdensity lnlabwed, recast(area) fcolor(gs13) lcolor(gs13) ///
+addplot((kdensity lnlabwed if soe==1, lcolor(red)) ///
+(kdensity lnlabwed if soe==0, lcolor(navy))) ///
 ytitle(Kernel Density) xtitle(Log of Labor Wedge) title("") ///
 legend(order(1 "All Firms" 2 "SOE" 3 "Private Firms") rows(1)) scheme(s1color)
 
 
-//Ex 3
+//Ex 3 后面的code涉及到TFP的地方也要跟着修改！
 
 //计算efficiency losses
 bys year: egen temp1=sum(tfp^4)
