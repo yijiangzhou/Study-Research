@@ -14,6 +14,14 @@ q = 3;
 % https://github.com/vfitoolkit/VFIToolkit-matlab
 % https://developer.nvidia.com/cuda-downloads
 
+% Alternative Settings
+% mu = 0;
+% rho = 0.8;
+% sigmasq = 0.6;
+% epsi_num = 10;
+% q = 3;
+% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+
 %% Initialize Parameters
 a0 = 5;
 a1 = 0.1;
