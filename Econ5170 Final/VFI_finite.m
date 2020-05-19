@@ -3,24 +3,24 @@ clear
 clc
 
 %% Tauchen Method
-mu = 0;
-rho = 0;
-sigmasq = 1;
-epsi_num = 10;
-q = 3;
-[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+% mu = 0;
+% rho = 0;
+% sigmasq = 1;
+% epsi_num = 10;
+% q = 3;
+% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 % The MATLAB package Value-Function-Iteration and NVIDIA CUDA toolkit are
 % needed to perform Tauchen method.See for details at
 % https://github.com/vfitoolkit/VFIToolkit-matlab
 % https://developer.nvidia.com/cuda-downloads
 
 % Alternative Settings
-% mu = 0;
-% rho = 0.8;
-% sigmasq = 0.6;
-% epsi_num = 10;
-% q = 3;
-% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+mu = 0;
+rho = 0.8;
+sigmasq = 0.36;
+epsi_num = 10;
+q = 3;
+[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 
 %% Initialize Parameters
 a0 = 5;
@@ -48,7 +48,7 @@ for i = T-2:-1:1
 end % Initialize the value function and the policy function.
 
 lnwage_d = zeros(1,T-1);
-for t = T-1:-1:1
+for t = 1:1:T-1
     lnwage_d(t) = a0 + a1 * t + a2 * (t^2);
 end % This is the deterministic part of wage at each period.
 
@@ -69,7 +69,7 @@ for t = T-1:-1:1
                     - policyf_c{t}(i,j)));
             end
         end
-    else %if t == T-2
+    else %if t >= T-3
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
