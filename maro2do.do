@@ -212,13 +212,16 @@ ytitle(Kernel Density) xtitle(Log of Labor Wedge) title("") ///
 legend(order(1 "All Firms" 2 "SOE" 3 "Private Firms") rows(1)) scheme(s1color)
 
 
-//Ex 3 后面的code涉及到TFP的地方也要跟着修改！
+//Ex 3
 
 //计算efficiency losses
-bys year: egen temp1=sum(tfp^4)
-bys year: egen temp2=sum((tfp/(capwed^0.5*labwed^0.5))^4)
-bys year: egen temp3=sum((1/capwed)*(tfp/(capwed^0.5*labwed^0.5))^4)
-bys year: egen temp4=sum((1/labwed)*(tfp/(capwed^0.5*labwed^0.5))^4)
+gen tfp_sc=((va_sc/y)^0.25)*((va_sc/rk_sc)^0.5)*((va_sc/emp_sc)^0.5)
+label variable tfp_sc "TFPQ (Scaled)"
+
+bys year: egen temp1=sum(tfp_sc^4)
+bys year: egen temp2=sum((tfp_sc/(capwed^0.5*labwed^0.5))^4)
+bys year: egen temp3=sum((1/capwed)*(tfp_sc/(capwed^0.5*labwed^0.5))^4)
+bys year: egen temp4=sum((1/labwed)*(tfp_sc/(capwed^0.5*labwed^0.5))^4)
 
 bys year: gen eloss=0.25*ln(temp1)-1.25*ln(temp2)+0.5*ln(temp3)+0.5*ln(temp4)
 label var eloss "Efficiency Loss"
@@ -228,14 +231,19 @@ sort id year
 //另一种计算方法
 bys year: egen aggk=sum(rk_sc)
 bys year: egen aggl=sum(emp_sc)
-bys year: egen aggtfp=sum(tfp^4)
-bys year: gen ystar=(aggtfp^0.25)*(aggk^0.5)*(aggl^0.5)
+bys year: egen aggtfp_sc=sum(tfp_sc^4)
+bys year: gen ystar=(aggtfp_sc^0.25)*(aggk^0.5)*(aggl^0.5)
 
 bys year: gen logdify=ln(ystar)-ln(y)
 label var logdify "(Alternative Way) Efficiency Loss"
-drop aggk aggl aggtfp ystar
+drop aggk aggl aggtfp_sc ystar
 sort id year
 
+preserve
+twoway (connected eloss year) (connected logdify year), ///
+ytitle(Efficiency Loss) xtitle(Year) legend(order(1 "Algorithm 1" ///
+2 "Algorithm 2") cols(2)) scheme(s1color)
+//restore
 
 //Ex 4
 
@@ -245,6 +253,7 @@ gen diflninputs=ln((rk_sc^0.5)*(emp_sc^0.5))-ln((l.rk_sc^0.5)*(l.emp_sc^0.5))
 label variable diflnva "diff log va_sc"
 label variable diflninputs "diff log inputs"
 
+corr diflnva diflninputs,covariance
 gen var_dlv=r(Var_1)
 gen var_dli=r(Var_2)
 gen cov_vainputs=r(cov_12)
@@ -261,18 +270,11 @@ gen lnva_sc=ln(va_sc)
 sum lnva_sc,detail
 display vy_sqr/r(Var)
 
-gen vtfp_sqr=(1/16)*vy_sqr+vi_sqr
-label variable vtfp_sqr "vtfp^2"
-gen lntfp=ln(tfp)
-sum lntfp,detail
-display vtfp_sqr/r(Var)
-
-
-
-
-
-
-
+gen vtfp_sc_sqr=(1/16)*vy_sqr+vi_sqr
+label variable vtfp_sc_sqr "vtfp^2"
+gen lntfp_sc=ln(tfp_sc)
+sum lntfp_sc,detail
+display vtfp_sc_sqr/r(Var)
 
 
 
