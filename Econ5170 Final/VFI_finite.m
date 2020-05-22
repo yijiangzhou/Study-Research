@@ -69,7 +69,7 @@ for t = T-1:-1:1
                     - policyf_c{t}(i,j)));
             end
         end
-    elseif t >= T-3
+    else %if t >= T-3
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
@@ -111,71 +111,41 @@ for t = T-1:-1:1
     end
 end
 toc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+save medA.mat
+
+%% Simulation
+load medA.mat
+N = 1000;
+A0 = 0;
+simu_wage = zeros(T-1,N);
+for t = 1:T-1
+    for n = 1:N
+        simu_wage(t,n) = datasample(w{t},1);
+    end
+end % Simulate wage paths for 1000 workers.
+
+simu_h = zeros(T-1,N);
+simu_c = zeros(T-1,N);
+for i = 1:N
+    for t = 1:T-1
+        if t == 1
+            row = find(w{t}==simu_wage(t,i));
+            column = find(A==A0);
+            simu_h(t,i) = policyf_h{t}(row,column);
+            simu_c(t,i) = policyf_c{t}(row,column);
+            previousA = A0;
+        else
+            nowA = (1 + r) * (previousA + simu_wage(t-1,i) * simu_h(t-1,i)...
+                - simu_c(t-1,i));
+            [~,closestIndex] = min(abs(A - nowA));
+            row = find(w{t}==simu_wage(t,i));
+            simu_h(t,i) = policyf_h{t}(row,closestIndex);
+            simu_c(t,i) = policyf_c{t}(row,closestIndex);
+            previousA = A(closestIndex);
+        end            
+    end
+end
+clear nowA previousA closestIndex row column
 
 
 
