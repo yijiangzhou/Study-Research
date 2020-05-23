@@ -2,6 +2,21 @@
 clear
 clc
 
+x = (100:100:10000);
+y = zeros(1,100);
+for i = 1:100
+y(i) = log(sqrt(x(i)));
+end
+polyfit(x,y,5);
+warn = warning('query','last');
+id = warn.identifier;
+warning('off',id)
+% This is used to suppress warning messages related to polynomial
+% approximation, as they do not affect execution but create unnecessary
+% confusion.
+clear x y warn i ans
+clc
+
 %% Tauchen Method
 mu = 0;
 rho = 0;
@@ -30,8 +45,8 @@ beta = 0.95;
 r = 0.05;
 T = 40;
 A = (0:10000:1000000);
-polyn = 4;
-% We use 4th order polynomial approximation in the following sections.
+polyn = 3;
+% We use 3rd order polynomial approximation in the following sections.
 
 epsi = (gather(epsi_grid))';
 pi_epsi = gather(pi_epsi);
@@ -69,16 +84,13 @@ for t = T-1:-1:1
                     - policyf_c{t}(i,j)));
             end
         end
-    else %if t >= T-3
+    elseif t >= T-3
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
             for i = 1:length(epsi)
                 coef(j,:) = polyfit(A,1./policyf_c{t+1}(j,:),polyn);
                 coef(j,:) = fliplr(coef(j,:));
-                % Some warining signs will pop up but they don't affect the
-                % calculation. Please kindly ignore them.
-                clc
                 for n = 1:polyn+1
                     bpi(i,n) = sum(coef(:,n) .* pi_epsi(j,i));
                 end
@@ -87,10 +99,10 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 policyf_c{t}(i,j) = solveforc2(bpi(i,1),bpi(i,2),bpi(i,3),...
-                    bpi(i,4),bpi(i,5),w{t}(i),A(j),beta,r);
+                    bpi(i,4),w{t}(i),A(j),beta,r);
                 % If polyn is changed, we need to adjust the function
-                % 'solveforc' and the expression of policyf_c{t}(i,j) since
-                % they are only designed for polyn=4 case.
+                % 'solveforc2' and the expression of policyf_c{t}(i,j) since
+                % they are only designed for polyn=3 case.
                 policyf_h{t}(i,j) = (w{t}(i)^2)/policyf_c{t}(i,j)^2;
                 upperh = (3/4) * 24 * 365;
                 % Set a upper bound on h. This is realistic because one
@@ -111,7 +123,8 @@ for t = T-1:-1:1
     end
 end
 toc
-save medA.mat
+warning('on',id)
+% save medA.mat
 
 %% Simulation
 load medA.mat

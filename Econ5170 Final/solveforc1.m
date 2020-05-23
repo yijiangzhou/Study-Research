@@ -2,15 +2,11 @@ function cstar = solveforc1(w,A,beta,r)
 syms c
 y = (1/c) - (beta/(r * (A + (w^3)/(c^2) -c)));
 
-root = sym2cell(vpasolve(y,c));
+temp = double(vpasolve(y,c));
+temp = temp(temp>0 & imag(temp)==0); % Extract all positive real roots
 
-temp = zeros(1,1);
-for i = 1:length(root)
-    if root{i}(1) > 0 && isreal(root{i}(1))
-        temp(1) = root{i}(1);
-        break % We only want one positive and real root.
-    else
-        temp(1) = NaN;
-    end
+if isempty(temp) == 0
+    cstar = temp(1); % We only want one positive real root
+else
+    cstar = NaN;
 end
-cstar = temp(1);
