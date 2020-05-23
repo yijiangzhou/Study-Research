@@ -11,11 +11,12 @@ polyfit(x,y,5);
 warn = warning('query','last');
 id = warn.identifier;
 warning('off',id)
+clc
 % This is used to suppress warning messages related to polynomial
 % approximation, as they do not affect execution but create unnecessary
 % confusion.
 clear x y warn i ans
-clc
+
 
 %% Tauchen Method
 mu = 0;
@@ -99,7 +100,7 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 policyf_c{t}(i,j) = solveforc2(bpi(i,1),bpi(i,2),bpi(i,3),...
-                    bpi(i,4),w{t}(i),A(j),beta,r);
+                    bpi(i,4),w{t}(i),A(j),beta,r,policyf_c{t+1}(i,j));
                 % If polyn is changed, we need to adjust the function
                 % 'solveforc2' and the expression of policyf_c{t}(i,j) since
                 % they are only designed for polyn=3 case.
