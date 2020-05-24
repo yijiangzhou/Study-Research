@@ -3,10 +3,11 @@ syms c
 y = (1/c) - (beta/(r * (A + (w^3)/(c^2) -c)));
 
 temp = double(vpasolve(y,c));
-temp = temp(temp>0 & imag(temp)==0); % Extract all positive real roots
+temp = temp(temp>0 & imag(temp)==0); % Extract all positive real roots.
 
 if isempty(temp) == 0
-    cstar = temp(1); % We only want one positive real root
+    cstar = temp(1);
+    % We only want one positive real root (the smallest).
 else
     cstar = NaN;
 end

@@ -19,6 +19,7 @@ clear x y warn i ans
 
 
 %% Tauchen Method
+clc
 mu = 0;
 rho = 0;
 sigmasq = 1;
@@ -46,8 +47,8 @@ beta = 0.95;
 r = 0.05;
 T = 40;
 A = (0:10000:1000000);
-polyn = 3;
-% We use 3rd order polynomial approximation in the following sections.
+polyn = 4;
+% We use 4th order polynomial approximation in the following sections.
 
 epsi = (gather(epsi_grid))';
 pi_epsi = gather(pi_epsi);
@@ -100,11 +101,17 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 policyf_c{t}(i,j) = solveforc2(bpi(i,1),bpi(i,2),bpi(i,3),...
-                    bpi(i,4),w{t}(i),A(j),beta,r,policyf_c{t+1}(i,j));
+                    bpi(i,4),bpi(i,5),w{t}(i),A(j),beta,r,policyf_c{t+1}(i,j));
                 % If polyn is changed, we need to adjust the function
                 % 'solveforc2' and the expression of policyf_c{t}(i,j) since
-                % they are only designed for polyn=3 case.
+                % they are only designed for polyn=4 case.
                 policyf_h{t}(i,j) = (w{t}(i)^2)/policyf_c{t}(i,j)^2;
+                if isnan(policyf_c{t}(i,j))
+                    [policyf_c{t}(i,j),policyf_h{t}(i,j)] = ...
+                        cornersolution(A,A(j),w{t}(i),beta,r,t,epsi,valuef);
+                end
+                % If there is no positive real solution of c^*, we use the
+                % corner solution.
                 upperh = (3/4) * 24 * 365;
                 % Set a upper bound on h. This is realistic because one
                 % cannot devote all time to work. The upper bound is 3/4 of
@@ -125,10 +132,10 @@ for t = T-1:-1:1
 end
 toc
 warning('on',id)
-% save medA.mat
+% save medAfirstc.mat
 
 %% Simulation
-load medA.mat
+% load medAfirstc.mat
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);
@@ -156,7 +163,7 @@ for i = 1:N
             simu_h(t,i) = policyf_h{t}(row,closestIndex);
             simu_c(t,i) = policyf_c{t}(row,closestIndex);
             previousA = A(closestIndex);
-        end            
+        end
     end
 end
 clear nowA previousA closestIndex row column
