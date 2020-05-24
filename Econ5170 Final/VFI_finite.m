@@ -86,7 +86,7 @@ for t = T-1:-1:1
                     - policyf_c{t}(i,j)));
             end
         end
-    elseif t >= T-3
+    else %if t >= T-3
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
@@ -132,10 +132,10 @@ for t = T-1:-1:1
 end
 toc
 warning('on',id)
-% save medAfirstc.mat
+save medA4_nearc.mat
 
 %% Simulation
-% load medAfirstc.mat
+load medA4_nearc.mat
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);
