@@ -46,7 +46,7 @@ a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-A = (0:5000:1000000);
+A = (0:100000:20000000);
 polyn = 2;
 % We use 2nd order polynomial approximation in the following sections.
 
@@ -132,10 +132,10 @@ for t = T-1:-1:1
 end
 toc
 warning('on',id)
-% save medA2_nearc.mat
+save bigA2_nearc2.mat
 
 %% Simulation
-% load medA2_nearc.mat
+load bigA2_nearc2.mat
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);
@@ -168,7 +168,13 @@ for i = 1:N
 end
 clear nowA previousA closestIndex row column
 
-
+% Mean of simulated working hours
+msimu_h = zeros(T-1,2);
+for t = 1:T-1
+    msimu_h(t,1) = t;
+    msimu_h(t,2) = mean(simu_h(t));
+end
+plot(msimu_h(:,1),msimu_h(:,2))
 
 
 

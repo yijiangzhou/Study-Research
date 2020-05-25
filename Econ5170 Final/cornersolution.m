@@ -9,6 +9,8 @@ for i = 1:length(h)
     end
 end
 [row,column] = find(vmatrix == max(vmatrix,[],'all'));
+% max(A,[],'all') finds the maximum over all elements of A.This syntax is
+% valid for MATLAB versions R2018b and later.
 cstar = A_value + w * h(row) - (A_grid(column)/(1+r));
 hstar = h(row);
 vstar = vmatrix(row,column);
