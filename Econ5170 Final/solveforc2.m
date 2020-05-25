@@ -1,4 +1,4 @@
-function cstar = solveforc2(bpi0,bpi1,bpi2,w,A,beta,lastc)
+function cstar = solveforc2(bpi0,bpi1,bpi2,w,A,beta,r,lastc)
 syms c
 y = (1/c) - beta * (1+r) * (bpi0 + bpi1 * ((1+r) * (A + (w^3)/(c^2) -c))...
     + bpi2 * ((1+r) * (A + (w^3)/(c^2) -c))^2);
