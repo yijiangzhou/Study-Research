@@ -116,14 +116,14 @@ for t = T-1:-1:1
                 end
                 valuef{t}(i,j) = log(policyf_c{t}(i,j))...
                     -  (1/1.5) * policyf_h{t}(i,j)^(1.5)...
-                   + beta * discountv(w{t}(i),A(j),r,policyf_c{t}(i,j),...
-                   policyf_h{t}(i,j),t,epsi,valuef);
-               % The 'weight' is the difference of normal CDF, see the
-               % 'discountv' function.
-               if isnan(policyf_c{t}(i,j))
-                   [policyf_c{t}(i,j),policyf_h{t}(i,j),valuef{t}(i,j)] = ...
-                       cornersolution(A,A(j),w{t}(i),beta,r,t,epsi,valuef);
-               end
+                    + beta * discountv(w{t}(i),A(j),r,policyf_c{t}(i,j),...
+                    policyf_h{t}(i,j),t,epsi,valuef);
+                % The 'weight' is the difference of normal CDF, see the
+                % 'discountv' function.
+                if isnan(policyf_c{t}(i,j))
+                    [policyf_c{t}(i,j),policyf_h{t}(i,j),valuef{t}(i,j)] = ...
+                        cornersolution(A,A(j),w{t}(i),beta,r,t,epsi,valuef);
+                end
                 % If there is no positive real solution of c^*, we use the
                 % corner solution.
             end

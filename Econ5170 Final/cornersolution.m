@@ -1,5 +1,5 @@
 function [cstar,hstar,vstar] = cornersolution(A_grid,A_value,w,beta,r,t,epsi,valuef)
-h = 100:100:8700;
+h = 100:100:6700;
 vmatrix = zeros(length(h),length(A_grid));
 for i = 1:length(h)
     for j = 1:length(A_grid)
