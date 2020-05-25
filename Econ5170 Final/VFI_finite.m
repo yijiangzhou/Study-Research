@@ -46,7 +46,7 @@ a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-A = (0:100000:20000000);
+A = (0:40000:20000000);
 polyn = 2;
 % We use 2nd order polynomial approximation in the following sections.
 
@@ -132,10 +132,10 @@ for t = T-1:-1:1
 end
 toc
 warning('on',id)
-save bigA2_nearc2.mat
+save bigA2_nearc3.mat
 
 %% Simulation
-load bigA2_nearc2.mat
+load bigA2_nearc3.mat
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);
@@ -175,6 +175,9 @@ for t = 1:T-1
     msimu_h(t,2) = mean(simu_h(t));
 end
 plot(msimu_h(:,1),msimu_h(:,2))
+title('\fontsize{13}Average Working Hours by T')
+xlabel('T = (+ 16 = Age)')
+ylabel('Average Working Hours')
 
 
 
