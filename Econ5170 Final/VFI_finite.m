@@ -46,9 +46,9 @@ a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-A = (0:10000:1000000);
-polyn = 4;
-% We use 4th order polynomial approximation in the following sections.
+A = (0:5000:1000000);
+polyn = 2;
+% We use 2nd order polynomial approximation in the following sections.
 
 epsi = (gather(epsi_grid))';
 pi_epsi = gather(pi_epsi);
@@ -101,17 +101,11 @@ for t = T-1:-1:1
         for i = 1:length(epsi)
             for j = 1:length(A)
                 policyf_c{t}(i,j) = solveforc2(bpi(i,1),bpi(i,2),bpi(i,3),...
-                    bpi(i,4),bpi(i,5),w{t}(i),A(j),beta,r,policyf_c{t+1}(i,j));
+                    w{t}(i),A(j),beta,r,policyf_c{t+1}(i,j));
                 % If polyn is changed, we need to adjust the function
                 % 'solveforc2' and the expression of policyf_c{t}(i,j) since
-                % they are only designed for polyn=4 case.
+                % they are only designed for polyn=2 case.
                 policyf_h{t}(i,j) = (w{t}(i)^2)/policyf_c{t}(i,j)^2;
-                if isnan(policyf_c{t}(i,j))
-                    [policyf_c{t}(i,j),policyf_h{t}(i,j)] = ...
-                        cornersolution(A,A(j),w{t}(i),beta,r,t,epsi,valuef);
-                end
-                % If there is no positive real solution of c^*, we use the
-                % corner solution.
                 upperh = (3/4) * 24 * 365;
                 % Set a upper bound on h. This is realistic because one
                 % cannot devote all time to work. The upper bound is 3/4 of
@@ -124,18 +118,24 @@ for t = T-1:-1:1
                     -  (1/1.5) * policyf_h{t}(i,j)^(1.5)...
                    + beta * discountv(w{t}(i),A(j),r,policyf_c{t}(i,j),...
                    policyf_h{t}(i,j),t,epsi,valuef);
-                % The 'weight' is the difference of normal CDF, see the
-                % 'discountv' function.
+               % The 'weight' is the difference of normal CDF, see the
+               % 'discountv' function.
+               if isnan(policyf_c{t}(i,j))
+                   [policyf_c{t}(i,j),policyf_h{t}(i,j),valuef{t}(i,j)] = ...
+                       cornersolution(A,A(j),w{t}(i),beta,r,t,epsi,valuef);
+               end
+                % If there is no positive real solution of c^*, we use the
+                % corner solution.
             end
         end
     end
 end
 toc
 warning('on',id)
-save medA4_nearc.mat
+% save medA2_nearc.mat
 
 %% Simulation
-load medA4_nearc.mat
+% load medA2_nearc.mat
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);

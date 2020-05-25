@@ -11,4 +11,4 @@ for i = 1:length(epsi)
             * (normcdf(epsi(i)) - normcdf(epsi(i-1)));
     end
 end
-v = sum(tempmatrix);
+v = sum(tempmatrix(isfinite(tempmatrix)));
