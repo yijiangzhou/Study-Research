@@ -19,25 +19,26 @@ clear x y warn i ans
 
 
 %% Tauchen Method
-clc
-mu = 0;
-rho = 0;
-sigmasq = 1;
-epsi_num = 10;
-q = 3;
-[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+% clc
+% mu = 0;
+% rho = 0;
+% sigmasq = 1;
+% epsi_num = 10;
+% q = 3;
+% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 % The MATLAB package Value-Function-Iteration and NVIDIA CUDA toolkit are
 % needed to perform Tauchen method.See for details at
 % https://github.com/vfitoolkit/VFIToolkit-matlab
 % https://developer.nvidia.com/cuda-downloads
 
 % Alternative Settings
-% mu = 0;
-% rho = 0.8;
-% sigmasq = 0.36;
-% epsi_num = 10;
-% q = 3;
-% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+clc
+mu = 0;
+rho = 0.8;
+sigmasq = 0.36;
+epsi_num = 10;
+q = 3;
+[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 
 %% Initialize Parameters
 a0 = 5;
@@ -46,7 +47,9 @@ a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-A = (0:40000:20000000);
+% A = (0:40000:20000000);
+A = (0:200000:20000000); 
+% Less grids can significantly reduce time of execution.
 polyn = 2;
 % We use 2nd order polynomial approximation in the following sections.
 
@@ -126,23 +129,37 @@ for t = T-1:-1:1
                 end
                 % If there is no positive real solution of c^*, we use the
                 % corner solution.
+                % It turns out that solving for corner solutions is
+                % extremely time-consuming.
             end
         end
     end
 end
 toc
 warning('on',id)
-save bigA2_nearc3.mat
+
+% save bigA2_nearc3.mat
+% save bigA2_nearc3_tax.mat
+save bigA2_nearc3_alt.mat
 
 %% Simulation
-load bigA2_nearc3.mat
+% load bigA2_nearc3.mat
+% load bigA2_nearc3_tax.mat
+load bigA2_nearc3_alt.mat
+
 N = 1000;
 A0 = 0;
 simu_wage = zeros(T-1,N);
-for t = 1:T-1
-    for n = 1:N
-        simu_wage(t,n) = datasample(w{t},1);
+weights = zeros(1,length(epsi));
+for i = 1:length(epsi)
+    if i == 1
+        weights(i) = normcdf(epsi(i));
+    else
+        weights(i) = normcdf(epsi(i)) - normcdf(epsi(i-1));
     end
+end
+for t = 1:T-1
+    simu_wage(t,:) = randsample(w{t}',N,true,weights);
 end % Simulate wage paths for 1000 workers.
 
 simu_h = zeros(T-1,N);
@@ -175,9 +192,9 @@ for t = 1:T-1
     msimu_h(t,2) = mean(simu_h(t));
 end
 plot(msimu_h(:,1),msimu_h(:,2))
-title('\fontsize{13}Average Working Hours by T')
+title('\fontsize{12}Simulated Working Hours by T with Tax')
 xlabel('T = (+ 16 = Age)')
-ylabel('Average Working Hours')
+ylabel('Simulated Average Working Hours')
 
 
 
