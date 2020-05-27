@@ -7,7 +7,7 @@ temp = temp(temp>0 & imag(temp)==0); % Extract all positive real roots.
 
 if isempty(temp) == 0
     cstar = temp(1);
-    % We only want one positive real root (the smallest).
+    % We only want one positive real root.
 else
     cstar = NaN;
 end

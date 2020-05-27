@@ -19,26 +19,26 @@ clear x y warn i ans
 
 
 %% Tauchen Method
-% clc
-% mu = 0;
-% rho = 0;
-% sigmasq = 1;
-% epsi_num = 10;
-% q = 3;
-% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+clc
+mu = 0;
+rho = 0;
+sigmasq = 1;
+epsi_num = 10;
+q = 3;
+[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 % The MATLAB package Value-Function-Iteration and NVIDIA CUDA toolkit are
 % needed to perform Tauchen method.See for details at
 % https://github.com/vfitoolkit/VFIToolkit-matlab
 % https://developer.nvidia.com/cuda-downloads
 
 % Alternative Settings
-clc
-mu = 0;
-rho = 0.8;
-sigmasq = 0.36;
-epsi_num = 10;
-q = 3;
-[epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
+% clc
+% mu = 0;
+% rho = 0.8;
+% sigmasq = 0.36;
+% epsi_num = 10;
+% q = 3;
+% [epsi_grid,pi_epsi] = TauchenMethod(mu,sigmasq,rho,epsi_num,q);
 
 %% Initialize Parameters
 a0 = 5;
@@ -47,8 +47,8 @@ a2 = -0.002;
 beta = 0.95;
 r = 0.05;
 T = 40;
-% A = (0:40000:20000000);
-A = (0:200000:20000000); 
+A = (0:40000:20000000);
+% A = (0:200000:20000000);
 % Less grids can significantly reduce time of execution.
 polyn = 2;
 % We use 2nd order polynomial approximation in the following sections.
@@ -89,7 +89,7 @@ for t = T-1:-1:1
                     - policyf_c{t}(i,j)));
             end
         end
-    else %if t >= T-3
+    else
         coef = zeros(length(epsi),polyn+1);
         bpi = zeros(length(epsi),polyn+1);
         for j = 1:length(epsi)
@@ -138,14 +138,14 @@ end
 toc
 warning('on',id)
 
-% save bigA2_nearc3.mat
-% save bigA2_nearc3_tax.mat
-save bigA2_nearc3_alt.mat
+% save Q1ab.mat
+% save Q1c.mat
+% save Q1d.mat
 
 %% Simulation
-% load bigA2_nearc3.mat
-% load bigA2_nearc3_tax.mat
-load bigA2_nearc3_alt.mat
+% load Q1ab.mat
+% load Q1c.mat
+% load Q1d.mat
 
 N = 1000;
 A0 = 0;
@@ -185,47 +185,35 @@ for i = 1:N
 end
 clear nowA previousA closestIndex row column
 
+fig = figure;
+
+% Mean of simulated wages
+msimu_w = zeros(T-1,2);
+for t = 1:T-1
+    msimu_w(t,1) = t;
+    msimu_w(t,2) = mean(simu_wage(t));
+end
+subplot(2,1,1)
+plot(msimu_w(:,1),msimu_w(:,2))
+title('\fontsize{12}Simulated Wages by T with Tax')
+xlabel('T = (+ 16 = Age)')
+ylabel('Wage')
+
 % Mean of simulated working hours
 msimu_h = zeros(T-1,2);
 for t = 1:T-1
     msimu_h(t,1) = t;
     msimu_h(t,2) = mean(simu_h(t));
 end
+subplot(2,1,2)
 plot(msimu_h(:,1),msimu_h(:,2))
 title('\fontsize{12}Simulated Working Hours by T with Tax')
 xlabel('T = (+ 16 = Age)')
-ylabel('Simulated Average Working Hours')
+ylabel('Working Hours')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% fig.PaperPositionMode = 'manual';
+% orient(fig,'landscape')
+% print(fig,'LandscapePage.pdf','-dpdf')
 
 
 
