@@ -61,7 +61,7 @@ sort country time
 save GDP.dta, replace
 
 //I used the MATLAB program "BIS_format.m" to format the raw data from BIS
-//The formatted data would continued to be processed in Stata
+//The formatted data would continue to be processed in Stata
 
 import delimited hh_ls_pgdp.csv, clear
 
