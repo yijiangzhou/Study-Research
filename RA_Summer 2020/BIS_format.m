@@ -40,7 +40,7 @@ for i = 1:rows * columns
 end
 
 table = cell2table(tempcell,'VariableNames',{'country','time','hh_ls_pgdp'});
-writetable(table,'hh_ls_pdgp.csv');
+writetable(table,'hh_ls_pgdp.csv');
 
 %% hh_ls, US dollar
 % The algorithm is exactly the same
