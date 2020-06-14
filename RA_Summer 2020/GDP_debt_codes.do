@@ -1,5 +1,4 @@
 //GDP and debt data
-clear
 
 //Extract quarterly nominal GDP and real GDP for all countries,
 //domestic currency from IFS database of IMF
@@ -61,7 +60,7 @@ sort country time
 save GDP.dta, replace
 
 //I used the MATLAB program "BIS_format.m" to format the raw data from BIS
-//The formatted data would continue to be processed in Stata
+//The formatted data would continued to be processed in Stata
 
 import delimited hh_ls_pgdp.csv, clear
 
@@ -107,12 +106,31 @@ order country, b(time)
 sort country time
 save hh_ls_dc.dta, replace
 
+import delimited nfc_pgdp.csv, clear
+
+//Format the dataset into a panel
+gen temp1 = date(time,"DMY")
+format temp1 %td
+gen temp2 = qofd(temp1)
+format temp2 %tq
+drop temp1 time
+rename temp2 time
+label var nfc_pgdp "NFC core debt, %GDP"
+order time, b(nfc_pgdp)
+sort country time
+save nfc_pgdp.dta, replace
+
+import delimited hh_ls_usd.csv, clear
+
 //Merge all datasets
 use hh_ls_pgdp.dta, clear
 merge 1:1 country time using hh_ls_usd.dta
 duplicates report country time
 drop _merge
 merge 1:1 country time using hh_ls_dc.dta
+duplicates report country time
+drop _merge
+merge 1:1 country time using nfc_pgdp.dta
 duplicates report country time
 drop _merge
 merge 1:1 country time using GDP.dta
@@ -125,5 +143,3 @@ drop _merge
 xtset country_encoded time
 
 save GDP_debt.dta, replace
-
-
