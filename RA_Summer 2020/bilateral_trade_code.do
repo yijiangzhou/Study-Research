@@ -162,5 +162,23 @@ order exporter_name,b(sitc0)
 sort year
 save bilateral_trade_1digit.dta,replace
 
+//Examining the datasets and dealing with missing values
+clear
+use bilateral_trade_4digit.dta,clear
+tab year if sitc0_0011 == -30
+tab year if importer_name == "NULL" | exporter_name == "NULL"
+
+drop if sitc0_0011 == -30 //Drop all "-30" observations
+drop if importer_name == "NULL" | exporter_name == "NULL" //Drop all "NULL" observations
+save,replace
+
+clear
+use bilateral_trade_1digit.dta,clear
+tab year if importer_name == "NULL" | exporter_name == "NULL"
+drop if importer_name == "NULL" | exporter_name == "NULL" //Drop all "NULL" observations
+save,replace
+
+
+
 
 
