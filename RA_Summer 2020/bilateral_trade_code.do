@@ -178,6 +178,40 @@ tab year if importer_name == "NULL" | exporter_name == "NULL"
 drop if importer_name == "NULL" | exporter_name == "NULL" //Drop all "NULL" observations
 save,replace
 
+//Check "positive" trade in 4-digit dataset (after dropping missing values)
+clear
+use bilateral_trade_4digit.dta,clear
+egen totaltrade = rowtotal(sitc0_0011-sitc0_9610) //Add up all trade volumes. This
+//step takes about 2 hrs
+keep year importer_iso importer_name exporter_iso exporter_name totaltrade
+save totaltrade.dta,replace
+
+use totaltrade.dta,clear
+label var totaltrade "Total trade volume by observation"
+tab year
+tab year if totaltrade == 0 //"Zero" observations
+bys year importer_name: egen imptrade = sum(totaltrade) //Now we add trade volume by importer
+label var imptrade "Total trade by importer"
+bys year exporter_name: egen exptrade = sum(totaltrade) //Add trade volume by exporter
+label var exptrade "Total trade by exporter"
+save,replace
+
+bys year importer_name: keep if _n == _N
+drop totaltrade
+tab year
+tab year if imptrade == 0 //"Zero" importers
+use totaltrade.dta,clear
+bys year exporter_name: keep if _n == _N
+drop totaltrade
+tab year
+tab year if exptrade == 0 //"Zero" exporters
+clear
+
+
+
+
+
+
 
 
 
