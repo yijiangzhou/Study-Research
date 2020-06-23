@@ -143,3 +143,14 @@ drop _merge
 xtset country_encoded time
 
 save GDP_debt.dta, replace
+
+//Convert country codes and time to numbers
+use GDP_debt.dta, clear
+egen country_number = group(country) //generate country code number
+label var country_number "country code number"
+sum time
+gen time_number = time + (100-r(min))
+label var time_number "time number" //generate time number, with 1949q1 = 100
+save, replace
+
+
