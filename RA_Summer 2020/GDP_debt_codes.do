@@ -1,4 +1,9 @@
 //GDP and debt data
+clear
+
+//Original codes to produce the dataset
+//by Yijiang Zhou
+//June 12, 2020
 
 //Extract quarterly nominal GDP and real GDP for all countries,
 //domestic currency from IFS database of IMF
@@ -144,7 +149,10 @@ xtset country_encoded time
 
 save GDP_debt.dta, replace
 
+
 //Convert country codes and time to numbers
+//by Yijiang Zhou
+//June 23, 2020
 use GDP_debt.dta, clear
 egen country_number = group(country) //generate country code number
 label var country_number "country code number"
@@ -152,5 +160,97 @@ sum time
 gen time_number = time + (100-r(min))
 label var time_number "time number" //generate time number, with 1949q1 = 100
 save, replace
+
+
+//Getting real GDP (domestic currency) data from IMF-SNA database and
+//merge it into the dataset
+//by Yijiang Zhou
+//June 23, 2020
+clear
+sdmxuse data IMF, clear dataset(SNA) dimensions(Q..NGDP_R_XDC) panel(ref_area)
+keep ref_area time valuek_0_p3m_ valuek_3_p3m_ valuek_6_p3m_ valuek_9_p3m_
+
+//Unify the unit of measure for GDP data to 10^6
+gen gdpr_dc_SNA = .
+replace gdpr_dc_SNA = valuek_9_p3m_*1000 if valuek_9_p3m_ != .
+replace gdpr_dc_SNA = valuek_6_p3m_ if valuek_6_p3m_ != .
+replace gdpr_dc_SNA = valuek_3_p3m_/1000 if valuek_3_p3m_ != .
+replace gdpr_dc_SNA = valuek_0_p3m_/1000000 if valuek_0_p3m_ != .
+label var gdpr_dc_SNA "Real GDP in DC from SNA, 10^6"
+
+//Format the dataset into a panel
+gen newtime = quarterly(time,"YQ")
+format newtime %tq
+drop time
+rename newtime time
+rename ref_area country
+sort country time
+keep country time gdpr_dc_SNA
+order time, b(gdpr_dc_SNA)
+order country, b(time)
+
+save GDP_RDC_SNA.dta, replace
+
+//Merge it into the dataset
+use GDP_debt.dta, clear
+merge 1:1 country time using GDP_RDC_SNA.dta
+drop if _merge == 2
+drop _merge
+order gdpr_dc_SNA, b(gdpn_us)
+drop country_encoded country_fullname country_number time_number
+encode country,gen(country_encoded)
+merge n:1 country using country_fullname.dta
+keep if _merge == 3
+drop _merge
+egen country_number = group(country) //re-generate country code number
+label var country_number "country code number"
+sum time
+gen time_number = time + (100-r(min))
+label var time_number "time number" //re-generate time number, with 1949q1 = 100
+sort country time
+xtset country_encoded time
+
+save, replace
+
+
+* export to excel
+* by Professor Sheng
+use GDP_debt.dta, clear
+
+gen lnGDP=ln(gdpr_dc)
+
+lab var lnGDP "Ln real GDP in local currency"
+
+keep country time  lnGDP hh_ls_pgdp nfc_pgdp
+
+order country time  lnGDP hh_ls_pgdp nfc_pgdp
+
+sort country time
+
+export excel using "D:\Dropbox\idea\LP\data\examples\MSV\quarterlydata\household_q.xls", ///
+firstrow(variables) replace
+
+
+//Describe the time span of non-missing values in gdpr_dc_SNA and hh_ls_pgdp
+//by Yijiang Zhou
+//June 23, 2020
+use GDP_debt.dta, clear
+keep if hh_ls_pgdp != . & gdpr_dc_SNA != . //Keep the observations whose hh_ls_pgdp and
+//gdpr_dc_SNA are both non-missing
+bys country: keep if _n == 1 | _n == _N
+bys country: egen time_end = max(time)
+format time_end %tq
+label var time_end "End time of non-missing values"
+order time_end,b(hh_ls_pgdp)
+rename time time_start
+label var time_start "Start time of non-missing values"
+bys country: keep if _n == 1
+keep country time_start time_end country_encoded country_fullname country_number
+
+save non_missing_timespan.dta, replace
+
+
+
+
 
 
