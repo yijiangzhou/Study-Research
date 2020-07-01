@@ -125,8 +125,6 @@ order time, b(nfc_pgdp)
 sort country time
 save nfc_pgdp.dta, replace
 
-import delimited hh_ls_usd.csv, clear
-
 //Merge all datasets
 use hh_ls_pgdp.dta, clear
 merge 1:1 country time using hh_ls_usd.dta
@@ -213,13 +211,53 @@ xtset country_encoded time
 save, replace
 
 
+
+//Describe the time span of non-missing values in gdpr_dc_SNA and hh_ls_pgdp
+//by Yijiang Zhou
+//June 23, 2020
+// Revised by Liugang, 25/6/2020
+
+use GDP_debt.dta, clear
+
+gen lnGDP=ln(gdpr_dc_SNA)
+
+lab var lnGDP "Ln real GDP in local currency from SNA, IMF"
+
+keep if hh_ls_pgdp != . & lnGDP!= . //Keep the observations whose hh_ls_pgdp and
+//gdpr_dc_SNA are both non-missing
+bys country: keep if _n == 1 | _n == _N
+bys country: egen time_end = max(time)
+format time_end %tq
+label var time_end "End time of non-missing values"
+order time_end,b(hh_ls_pgdp)
+rename time time_start
+label var time_start "Start time of non-missing values"
+
+bys country: keep if _n == 1
+
+
+* gen the duration of time range for each country
+gen n= time_end-time_start
+lab var n "duration of time range for each country"
+
+* recode country code for remaining countries
+drop country_number
+egen country_number=group(country)
+
+keep country time_start time_end country_encoded country_fullname country_number n
+
+save non_missing_timespan.dta, replace
+
+
+
+
 * export to excel
 * by Professor Sheng
 use GDP_debt.dta, clear
 
-gen lnGDP=ln(gdpr_dc)
+gen lnGDP=ln(gdpr_dc_SNA)
 
-lab var lnGDP "Ln real GDP in local currency"
+lab var lnGDP "Ln real GDP in local currency from SNA, IMF"
 
 keep country time  lnGDP hh_ls_pgdp nfc_pgdp
 
@@ -231,12 +269,77 @@ export excel using "D:\Dropbox\idea\LP\data\examples\MSV\quarterlydata\household
 firstrow(variables) replace
 
 
-//Describe the time span of non-missing values in gdpr_dc_SNA and hh_ls_pgdp
-//by Yijiang Zhou
-//June 23, 2020
+
+//Real GDP data from IFS, revised
+//By Prof. Sheng and Yijiang
+//June 27, 2020
+
+sdmxuse data IMF, clear dataset(IFS) dimensions(Q..NGDP_R_K_IX+NGDP_R_K_SA_IX) panel(ref_area)
+drop ngdp_r_k_ix__p3m
+lab var ngdp_r_k_ix_p3m_ "real GDP at constant price of 2010, local currency no SA"
+lab var ngdp_r_k_sa_ix_p3m_ "real GDP at constant price of 2010, local currency SA"
+
+//Format the dataset into a panel
+gen newtime = quarterly(time,"YQ")
+format newtime %tq
+drop time
+rename newtime time
+rename ref_area country
+order time, a(country)
+sort country time
+
+* gen lnGDP based on raw real GDP 
+gen lnGDP=ln(ngdp_r_k_ix_p3m_)
+
+* use SA adjusted real GDP for countries that have SA real GDP 
+* please double check, this hand input of country list is not a good way to do, but a quick way. You can find a better way..
+
+replace lnGDP=ln(ngdp_r_k_sa_ix_p3m_) if cou=="CA" | cou=="CH" | cou=="IT"  ///
+| cou=="JP"  | cou=="MX"  | cou=="NZ" | cou=="U2"  | cou=="US"  | cou=="ZA" 
+* (2,008 real changes made, 96 to missing), check those 96 obs.
+
+lab var lnGDP "Ln real GDP in local currency IMF"
+save realGDP.dta, replace
+
+keep if lnGDP!= .
+bys country: keep if _n == 1 | _n == _N
+bys country: egen time_end = max(time)
+format time_end %tq
+label var time_end "End time of non-missing values"
+rename time time_start
+label var time_start "Start time of non-missing values"
+
+bys country: keep if _n == 1
+keep country time_start time_end
+
+* gen the duration of time range for each country
+gen n= time_end-time_start
+lab var n "duration of time range for each country"
+
+save realGDP_timespan.dta, replace
+
+//Merge the newly collected GDP into the original dataset
 use GDP_debt.dta, clear
-keep if hh_ls_pgdp != . & gdpr_dc_SNA != . //Keep the observations whose hh_ls_pgdp and
-//gdpr_dc_SNA are both non-missing
+drop country_encoded country_fullname country_number time_number
+merge 1:1 country time using realGDP
+keep if _merge != 2
+drop _merge
+encode country,gen(country_encoded)
+merge n:1 country using country_fullname.dta
+keep if _merge == 3
+drop _merge
+egen country_number = group(country) //re-generate country code number
+label var country_number "country code number"
+sum time
+gen time_number = time + (100-r(min))
+label var time_number "time number" //re-generate time number, with 1949q1 = 100
+sort country time
+xtset country_encoded time
+save, replace
+
+//Generate time span for non-missing hh_ls_pgdp and lnGDP
+use GDP_debt, clear
+keep if hh_ls_pgdp != . & lnGDP!= .
 bys country: keep if _n == 1 | _n == _N
 bys country: egen time_end = max(time)
 format time_end %tq
@@ -244,10 +347,62 @@ label var time_end "End time of non-missing values"
 order time_end,b(hh_ls_pgdp)
 rename time time_start
 label var time_start "Start time of non-missing values"
+
 bys country: keep if _n == 1
-keep country time_start time_end country_encoded country_fullname country_number
+
+* gen the duration of time range for each country
+gen n= time_end-time_start
+lab var n "duration of time range for each country"
+
+* recode country code for remaining countries
+drop country_number
+egen country_number=group(country)
+
+keep country time_start time_end country_fullname country_number n
+order n, b(country_fullname)
 
 save non_missing_timespan.dta, replace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
