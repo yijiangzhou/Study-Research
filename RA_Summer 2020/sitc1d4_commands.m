@@ -1,5 +1,6 @@
 % Generating SITC1 aggregation commands to be used in Stata
 % Produced by Yijiang
+
 clear;clc
 
 %% Extracting sitc1d4 and SNA
@@ -74,7 +75,7 @@ for i = 1:height(table)
 end
 
 % Drop all original sitc0_xxxx variables
-disp('drop sitc0_*')
+disp('drop sitc0_* v629')
 
 diary off
 
