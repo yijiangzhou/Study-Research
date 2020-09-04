@@ -10,13 +10,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1});
 end
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -52,13 +52,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1});
 end
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -94,13 +94,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1});
 end
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -136,13 +136,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1});
 end
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -178,13 +178,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1});
 end
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -220,13 +220,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1}(1:4));
 end % We only want to keep the first 4 digits
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -262,13 +262,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1}(1:4));
 end % We only want to keep the first 4 digits
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
@@ -304,13 +304,13 @@ clear;clc
 [length,~] = size(txt);
 [~,width] = size(txt);
  
- % Write all years into a string array
+% Write all years into a string array
 year = string.empty(width-1,0);
 for i = 1:width-1
     year(i) = string(txt{1,i+1}(1:4));
 end % We only want to keep the first 4 digits
 
- % Write all country (3-digit codes) into a string array
+% Write all country (3-digit codes) into a string array
 country = string.empty(0,length-1);
 for i = 1:length-1
     country(i) = string(txt{i+1,1});
