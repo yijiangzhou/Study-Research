@@ -2646,7 +2646,7 @@ local control fdi_inflow gdp_per popul_1564 m3 govshare indshare servshare
 			}
 	}
 
-global controllags ctr_*
+global control_andlags `control' ctr_*
 
 	foreach y in `yvar'{
     
@@ -2687,8 +2687,8 @@ foreach y in `yvar'{
 	forvalues i=0/`horizon' {
 
 	* LP regression
-		xtscc FD`i'`y' `x' $xlags $ylags $yearlist, fe
-	*	xtscc FD`i'`y' `x' $xlags $ylags $controllags $yearlist, fe
+	*	xtscc FD`i'`y' `x' $xlags $ylags $yearlist, fe
+		xtscc FD`i'`y' `x' $xlags $ylags $control_andlags $yearlist, fe
 		
 		replace b_`y' = _b[`x'] if _n == `i'+1
 		replace se_`y' = _se[`x'] if _n == `i'+1	
