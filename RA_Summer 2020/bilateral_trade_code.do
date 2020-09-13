@@ -2617,6 +2617,7 @@ lab var ctot "Percentage point change in CTOT: one unit=one percentage point of 
 local x ctot
 
 local yvar impshare_con impshare_kap impshare_med
+*local yvar lnimp_con lnimp_kap lnimp_med
 
 * horizon
 local horizon = 10
@@ -2718,6 +2719,12 @@ foreach y in `yvar'{
 	if strpos("`y'","impshare_con")>0 local lab2 "Consumption Import Share"
 	if strpos("`y'","impshare_kap")>0 local lab2 "Capital Import Share"
 	if strpos("`y'","impshare_med")>0 local lab2 "Intermediate Import Share"
+	if strpos("`y'","lnimp_con")>0 local lab2 "Log Consumption Imports"
+	if strpos("`y'","lnimp_kap")>0 local lab2 "Log Capital Import"
+	if strpos("`y'","lnimp_med")>0 local lab2 "Log Intermediate Import"
+	
+	if strpos("`y'","impshare")>0 local ytitle "Share"
+	if strpos("`y'","lnimp")>0 local ytitle "Percent"
 	
 	* additional line options
 	local lineopt "lc(black*0.5) lp(dash)" 
@@ -2730,7 +2737,7 @@ foreach y in `yvar'{
 		yline(0, `lineopt') 
 		xlabel(#12)
 		xtitle("Year", size(medsmall)) 
-		ytitle("Percent", size(medsmall)) 
+		ytitle(`ytitle', size(medsmall)) 
 		legend(col(2) lab(1 "95% CI") lab(2 "Est. IRF of `lab2'"))  
 	;
 	#delimit cr	
@@ -2745,8 +2752,177 @@ lnimp_kap lnimp_med lnxm_gdp diflnxm_gdp
 keep `originalvars'
 
 
+*******************************************
+* Local projection: country heterogeneity *
+*******************************************
+
+clear all
+cls
+
+use com_exporter.dta,clear
+
+egen countrycode=group(iso3)
+
+egen yrgp=group(year)
+
+xtset countrycode year
+
+xi I.year, prefix(_I)
+global yearlist _Iyear_1971-_Iyear_2014
+
+clonevar ctot = diflnxm_gdp
+
+lab var ctot "Percentage point change in CTOT: one unit=one percentage point of GDP"
+
+* interaction terms between CTOT and democratic measures in DDCG
+gen ctot_dem = ctot * dem
+gen ctot_polity = ctot * polity2_aug
+*local xd ctot_dem
+*local xd ctot_polity
+
+*local x ctot
+*local x ctot_dem
+local x ctot_polity
+
+*local yvar impshare_con impshare_kap impshare_med
+local yvar lnimp_con lnimp_kap lnimp_med
+
+* horizon
+local horizon = 10
+
+* number of lags
+local MaxLPLags = 3
+
+*** Lagged x variables
+
+   forvalues i = 1/`MaxLPLags'{	
+		gen L`i'`x' = l`i'.`x'
+		label var L`i'`x' "Lagged `i'"
+	}
+
+global xlags  L1`x'-  L`MaxLPLags'`x'
+
+sum $xlags
+
+* control variables
+
+local control fdi_inflow gdp_per popul_1564 m3 govshare indshare servshare
+
+	foreach var in `control'{
+		forvalues i = 1/`MaxLPLags'{
+			gen ctr_L`i'`var' = l`i'.`var'
+			label var ctr_L`i'`var' "ctr_Lagged `i'"
+			}
+	}
+
+global control_andlags `control' ctr_*
+
+	foreach y in `yvar'{
+    
+	gen D`y'=D.`y'
+	***** LHS var
+	forvalues i = 0/`horizon'{	
+		gen FD`i'`y' = (f`i'.`y' - l.`y')
+	    label var FD`i'`y' "Cumulative percentage changes up to year t+`i'"	
+	
+	*   on annual growth rate
+	*	gen FD`i'`y' = f`i'.D`y'
+	}
+	
+	*** Lagged change in y variables
+		forvalues i = 1/`MaxLPLags'{	
+		*local j = `i'+1
+		*gen LD`i'`y' = l`i'.`y'-l`j'.`y'
+		 gen LD`i'`y' = l`i'.D`y'
+		
+		label var LD`i'`y' "Lagged `i' period delta `y'"
+	}
+	global ylags  LD1`y'-  LD`MaxLPLags'`y'	
+	sum $ylags
+	
+	***** variables to store the impulse response (vector of betas from the LP regressions) and standard errors	
+	gen b_`y'=.
+	gen se_`y'=.
+
+}
 
 
+******************** table
+local csvfile "tot_lp.csv"
+cap erase `csvfile'
+* One regression for each horizon of the response
+foreach y in `yvar'{
+
+	forvalues i=0/`horizon' {
+
+	* LP regression
+	*	xtscc FD`i'`y' `x' $xlags $ylags $yearlist, fe
+		xtscc FD`i'`y' `x' $xlags $ylags $control_andlags $yearlist, fe
+		
+		replace b_`y' = _b[`x'] if _n == `i'+1
+		replace se_`y' = _se[`x'] if _n == `i'+1
+		
+	}
+
+}
+
+
+******************** graph
+
+gen Years = _n-1 if _n <= `horizon' +1
+
+* create confidence bands (in this case 90 and 95%)
+scalar sig1 = 0.05	 // specify significance level
+scalar sig2 = 0.1	 // specify significance level
+	
+foreach y in `yvar'{
+
+	gen up_`y' = b_`y' + invnormal(1-sig1/2)*se_`y' if _n <= (`horizon' + 1)
+	gen dn_`y' = b_`y' - invnormal(1-sig1/2)*se_`y' if _n <= (`horizon' + 1)
+
+*	gen up2_`y' = b_`y' + invnormal(1-sig2/2)*se_`y' if _n <= (`horizon' + 1)
+*	gen dn2_`y' = b_`y' - invnormal(1-sig2/2)*se_`y' if _n <= (`horizon' + 1)	
+			
+	* label and title
+	if strpos("`y'","impshare_con")>0 local lab2 "Consumption Import Share"
+	if strpos("`y'","impshare_kap")>0 local lab2 "Capital Import Share"
+	if strpos("`y'","impshare_med")>0 local lab2 "Intermediate Import Share"
+	if strpos("`y'","lnimp_con")>0 local lab2 "Log Consumption Imports"
+	if strpos("`y'","lnimp_kap")>0 local lab2 "Log Capital Import"
+	if strpos("`y'","lnimp_med")>0 local lab2 "Log Intermediate Import"
+	
+	if strpos("`y'","impshare")>0 local ytitle "Share"
+	if strpos("`y'","lnimp")>0 local ytitle "Percent"
+	
+	if strpos("`xd'","dem")>0 local xdname "dem"
+	if strpos("`xd'","polity")>0 local xdname "polity"
+	if strpos("`x'","dem")>0 local xdname "dem"
+	if strpos("`x'","polity")>0 local xdname "polity"
+	
+	* additional line options
+	local lineopt "lc(black*0.5) lp(dash)" 
+	
+	#delimit;	   
+	tw (rline up_`y' dn_`y' Years , fcolor(gs13) lcolor(gs7) lpattern(dash))
+	   (scatter b_`y' Years , c(l) clp(l) ms(o) clc(blue) mc(blue) clw(medthick)) 
+	   ,
+		scheme(s1mono)  
+		yline(0, `lineopt') 
+		xlabel(#12)
+		xtitle("Year", size(medsmall)) 
+		ytitle(`ytitle', size(medsmall)) 
+		legend(row(2) lab(1 "95% CI") lab(2 "Est. Interacted IRF of `lab2'"))  
+	;
+	#delimit cr	
+	graph export "lpin_`y'_`xdname'.pdf", as(pdf) replace
+}
+
+local originalvars year country country_namefull iso2 iso3 iso2cd imp_con imp_kap ///
+imp_med imptrade xm_gdp fdi_inflow fdi_outflow gdp_per popul_1564 m3 govshare ///
+indshare servshare impshare_con impshare_kap impshare_med lnimp_con ///
+lnimp_kap lnimp_med lnxm_gdp diflnxm_gdp
+
+keep `originalvars'
 
 
 
