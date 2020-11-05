@@ -36,17 +36,18 @@ else
                 end
             end
         end
+        
         iter = iter + 1;
     end
     
     if ~all(output_after - 0.5)
         disp(output_after)
         disp('Iteration failed!')
-        disp(['iter = ',num2str(iter)])
+        disp(['iter = ',num2str(iter-1)])
     else
         Istar = output_after;
         disp('Iteration succeeded!')
-        disp(['iter = ',num2str(iter)])
+        disp(['iter = ',num2str(iter-1)])
     end
     
 end
