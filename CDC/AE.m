@@ -41,7 +41,7 @@ else
     end
     
     if ~isempty(output_after(output_after == 0.5))
-        disp(output_after)
+        Istar = output_after;
         disp('Iteration failed!')
         disp(['iter = ',num2str(iter-1)])
     else
