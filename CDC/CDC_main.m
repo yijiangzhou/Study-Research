@@ -17,8 +17,14 @@ clear vec1 vec2
 Istar = AE(3,@jia_test,'super');
 Istar2 = AE(2,@aeeg2_test,'super');
 
+% The alternative AE iteration
+Istar3 = AE_alter([0.5 1],@aeeg2_test,'super');
+Istar4 = AE_alter([1 0],@aeeg2_test,'super');
+Istar5 = AE_alter([0.5 0.5 0.5],@jia_test,'super');
 
-
+% The AER iteration
+[Istar6,pistar6] = AER(3,@jia_test,'super');
+[Istar7,pistar7] = AER(2,@aeeg2_test,'super');
 
 
 

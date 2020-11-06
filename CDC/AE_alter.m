@@ -1,17 +1,16 @@
-function Istar = AE(N,func,modular)
-% This function implements the AE1 and AE2 algorithm.
+function Istar = AE_alter(vector,func,modular)
+% This function is the alternative AE1 and AE2, with input equaling to a
+% specific vector.
 
-if N < 2 || floor(N) ~= N
-    disp('Error! N must be an integer greater than 1.')
-    Istar = NaN;
-else
-    output = zeros(1,N);
-    output_after = zeros(1,N);
-    output_after(output_after == 0) = 0.5;
-    % output_after is the initial I, with all elements uncertain, i.e. all
-    % elements equal to 0.5.
-    iter = 0;
-    
+N = length(vector);
+output = zeros(1,N);
+output_after = vector;
+% The input vector may or may not contain some uncertain elements, which
+% are represented by 0.5.
+
+if isempty(vector(vector == 0.5))
+    Istar = vector;
+else    
     while any((output ~= output_after))
         output = output_after;
         supr = output_after;
@@ -37,19 +36,8 @@ else
             end
         end
         
-        iter = iter + 1;
     end
-    
-    if ~isempty(output_after(output_after == 0.5))
-        disp(output_after)
-        disp('Iteration failed!')
-        disp(['iter = ',num2str(iter-1)])
-    else
-        Istar = output_after;
-        disp('Iteration succeeded!')
-        disp(['iter = ',num2str(iter-1)])
-    end
-    
+    Istar = output_after;
 end
 
 
