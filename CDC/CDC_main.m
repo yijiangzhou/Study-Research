@@ -40,10 +40,13 @@ Istar1 = AE(20,@jia,'super');
 tic
 [Istar2,pistar2] = AER(repmat(0.5,1,20),@jia,'super');
 toc
+tic
+[Istar3,pistar3] = AER(repmat(0.5,1,25),@jia,'super');
+toc
 
 % Same problem with brutal force
 tic
-A = boolmatrix(20);
+A = boolmatrix(25);
 container = zeros(length(A),1);
 for i = 1:length(A)
     container(i) = jia(A(i,:));
