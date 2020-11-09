@@ -27,24 +27,30 @@ Istar_te5 = AE_alter([0.5 0.5 0.5],@jia_test,'super');
 [Istar_te7,pistar_te7] = AER(repmat(0.5,1,2),@aeeg2_test,'super');
 
 % The Jia (2008) payoff function
-A = [1 1 0 1 0 1 1 0 0 1 0 1 0 0 0 1 1 1 0 1];
-y = jia(A);
+A1 = [1 1 0 1 0 1 1 0 0 1 0 1 0 0 0 1 1 1 0 1];
+y1 = jia(A1);
+
+% The Antras et al.(2014) payoff function
+A2 = [1 1 0 1 0 1 1 0 0 1 0 1 0 0 0 1 0 1 0 1];
+y2 = antras(A2);
 
 %% AE and AER algorithm: examples
 
 clear;clc
 
-% To test Jia(), the input N (of AE and AER) must be equal to (5 * n),
+% To test jia(), the input N (of AE and AER) must be equal to (5 * n),
 % where n is a positive integer.
 Istar1 = AE(20,@jia,'super');
-tic
-[Istar2,pistar2] = AER(repmat(0.5,1,20),@jia,'super');
-toc
+[Istar2,pistar2] = AER(repmat(0.5,1,30),@jia,'super');
 tic
 [Istar3,pistar3] = AER(repmat(0.5,1,25),@jia,'super');
 toc
 
-% Same problem with brutal force
+% antras()
+Istar4 = AE(25,@antras,'super');
+[Istar5,pistar5] = AER(repmat(0.5,1,30),@antras,'super');
+
+% jia(), but with brutal force
 tic
 A = boolmatrix(25);
 container = zeros(length(A),1);
@@ -54,18 +60,6 @@ end
 pistar_force = max(container);
 Istar_force = A(container == pistar_force,:);
 toc
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
