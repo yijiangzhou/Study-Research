@@ -41,7 +41,7 @@ clear;clc
 % To test jia(), the input N (of AE and AER) must be equal to (5 * n),
 % where n is a positive integer.
 Istar1 = AE(20,@jia,'super');
-[Istar2,pistar2] = AER(repmat(0.5,1,30),@jia,'super');
+[Istar2,pistar2] = AER(repmat(0.5,1,20),@jia,'super');
 tic
 [Istar3,pistar3] = AER(repmat(0.5,1,25),@jia,'super');
 toc
