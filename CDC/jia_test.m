@@ -1,6 +1,0 @@
-function y = jia_test(vector)
-% A simple supermodular payoff function in Jia (2008)'s style
-
-y = vector(1) * (1 + vector(2) + vector(3))...
-    + vector(2) * (-6 + vector(1) + vector(3))...
-    + vector(3) * (0.5 + vector(1) + vector(2));
