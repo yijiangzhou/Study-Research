@@ -26,8 +26,8 @@ while d>toler
         % YJ: 企业要选出其中最大化value function的employment, 这就是policy function的含义
         [vrevised(i),dr(i)]=max(fi+beta*max(p(i,:)*vinitial',0)*ones(N,1)');
         % YJ: dr(i)是optimal employment node在n中的位置 (index)
-        % YJ: 感觉作者对trans probability下标的编号方式和Edmond slide里是反的, p_ij表示
-        % z = z_j at t and z = z_i at t+1
+        % YJ: 作者对trans probability下标的编号方式和Edmond slide一致, p_ij表示
+        % z = z_i at t and z = z_j at t+1
         exit(i)=1-1*(p(i,:)*vinitial'<0); % YJ: 1*(...) 括号里是逻辑判断
         % YJ: exit(i) = 0 if firm exits at productivity z_i and = 1 if firm
         % continues to produce at z_i
