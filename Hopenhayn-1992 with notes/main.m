@@ -60,7 +60,7 @@ while d>toler
     % YJ: exit decision is associated with equilibrium price calculated above
     mustay=muexit*p;                        %update for the incumbents stay
     muentry=mustay+inidis;                   %entry YJ: 此处设entry mass M = 1
-    murevised=muentry./sum(muentry); % 我们需要计算的mu^*是概率分布，而上一行算出的muentry是
+    murevised=muentry./sum(muentry); % YJ: 我们需要计算的mu^*是概率分布，而上一行算出的muentry是
     % 企业的“数量”，因此需要除以“数量”总和才能得到概率
     d=norm(murevised-muinitial)/norm(murevised);
     muinitial=murevised;
@@ -77,8 +77,8 @@ Xstar=z(Z-sum(exit));
 Pstar=price;
 Size = (decrule)*murevised'; 
 Y=(decrule.^theta.*z)*murevised';
-Mstar=y/[Y+(decrule.^theta.*z)*inidis']; % YJ: 分母是后面每一期假设entry mass M = 1的Y加上
-% 第一期的Y（第一期假设productivity dist.为inidis）
+Mstar=y/[Y+(decrule.^theta.*z)*inidis']; % YJ: 分母是假设entry mass M = 1的Y加上
+% entrants' Y divided by m, 详见code notes
 Exrate=sum(murevised(1:Z-sum(exit)))*100;
 
 disp('Results ');
