@@ -60,12 +60,32 @@ while d>toler
     % YJ: exit decision is associated with equilibrium price calculated above
     mustay=muexit*p;                        %update for the incumbents stay
     muentry=mustay+inidis;                   %entry YJ: 此处设entry mass M = 1
-    murevised=muentry./sum(muentry); % YJ: 我们需要计算的mu^*是概率分布，而上一行算出的muentry是
-    % 企业的“数量”，因此需要除以“数量”总和才能得到概率
+    murevised=muentry./sum(muentry); % YJ: 而上一行算出的muentry是企业的“数量”，
+    % YJ: 除以“数量”总和得到概率，但这样算出来的“分布”是否是mu^*存疑
     d=norm(murevised-muinitial)/norm(murevised);
     muinitial=murevised;
 end
-% YJ: 这里求出的mu^*, 就是entry mass M = 1时的mu^*. 参见Edmond slide p23
+
+% % YJ code begins
+% while d>toler
+%     muexit=muinitial.*exit;                 %exit decision
+%     mustay=muexit*p;                        %update for the incumbents stay
+%     muentry=mustay+inidis;                   %entry YJ: 此处设entry mass M = 1
+%     murevised=muentry;
+%     d=norm(murevised-muinitial)/norm(murevised);
+%     muinitial=murevised;
+% end
+% % YJ code ends
+
+% YJ code begins
+Psi = zeros(Z,Z);
+ptr = p';
+for i = 1:Z
+    Psi(:,i) = ptr(:,i) .* exit(i);
+end
+muedmond = (inv(eye(Z) - Psi) * inidis')';
+muedmond_sc = muedmond ./ sum(muedmond);
+% YJ code ends
 
 %% Calculating the entry mass M 
 % Using equilibrium condition in goods market
@@ -77,19 +97,24 @@ Xstar=z(Z-sum(exit));
 Pstar=price;
 Size = (decrule)*murevised'; 
 Y=(decrule.^theta.*z)*murevised';
-Mstar=y/[Y+(decrule.^theta.*z)*inidis']; % YJ: 分母是假设entry mass M = 1的Y加上
-% entrants' Y divided by m, 详见code notes
+Mstar=y/[Y+(decrule.^theta.*z)*inidis'];
 Exrate=sum(murevised(1:Z-sum(exit)))*100;
+
+% YJ code begins
+Size_yj = (decrule)*muedmond_sc'; 
+Y_yj=(decrule.^theta.*z)*muedmond';
+Mstar_yj=y/(Y_yj+(decrule.^theta.*z)*inidis');
+Exrate_yj=sum(muedmond_sc(1:Z-sum(exit)))*100;
+% YJ code ends
 
 disp('Results ');
 disp('');
 disp('    Price     Firms    Avg.size       ');
 disp([ Pstar  Mstar    Size   ]);
-
 % YJ code begins
-save result_baseline.mat
-
-
-
+disp('    Price     Firms_yj    Avg.size_yj       ');
+disp([ Pstar  Mstar_yj    Size_yj   ]);
 % YJ code ends
+
+% save baseline.mat
  

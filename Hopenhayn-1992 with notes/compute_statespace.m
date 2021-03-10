@@ -20,11 +20,21 @@ for j=2:(Z-1)
         normcdf(((lnz(j)-w/2)*ones(Z,1)-ro*lnz')/stde,0,1);
 end
 
+% % YJ code begins
+% p = eye(Z);
+% % YJ code ends
+
 % Initial distribution (assumed to be uniform)
 % YJ: 这就是Edmond slide里的g_i, the initial dist. of productivity
-% YJ: 问题，这是uniform distribution吗？所有数字都是一样的诶...
+% YJ: 这的确是uniform dist., 注意inidis是概率分布而非z的具体取值，z的取值还是z1到z21，
+% YJ: 而且取每个值的概率相同
 inidis=ones(1,Z)./Z;
 
+% YJ code begins
+% inidis(3) = inidis(3) + 0.02;
+% inidis(4) = inidis(4) - 0.01;
+% inidis(6) = inidis(6) - 0.01;
+% YJ code ends
 
 %% Grid points of n
 % with the largest to be 5000
