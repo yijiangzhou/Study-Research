@@ -85,4 +85,11 @@ disp('Results ');
 disp('');
 disp('    Price     Firms    Avg.size       ');
 disp([ Pstar  Mstar    Size   ]);
+
+% YJ code begins
+save result_baseline.mat
+
+
+
+% YJ code ends
  
