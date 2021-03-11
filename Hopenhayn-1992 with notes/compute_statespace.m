@@ -31,9 +31,9 @@ end
 inidis=ones(1,Z)./Z;
 
 % YJ code begins
-% inidis(3) = inidis(3) + 0.02;
-% inidis(4) = inidis(4) - 0.01;
-% inidis(6) = inidis(6) - 0.01;
+% inidis(3) = inidis(3) + 0.05;
+% inidis(4) = inidis(4) - 0.03;
+% inidis(6) = inidis(6) - 0.02;
 % YJ code ends
 
 %% Grid points of n
