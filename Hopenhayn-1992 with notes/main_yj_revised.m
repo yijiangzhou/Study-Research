@@ -87,7 +87,7 @@ Xstar=z(Z-sum(exit));
 Pstar=price;
 Size = (decrule)*murevised_sc'; 
 Y=(decrule.^theta.*z)*murevised';
-Mstar=y/[Y+(decrule.^theta.*z)*inidis'];
+Mstar=y/Y;
 Exrate=sum(murevised_sc(1:Z-sum(exit)))*100;
 
 disp('Results ');
