@@ -189,7 +189,10 @@ Kbe=K;
 Yp(1,1)=Y;
 Kp(1,1)=K;
 KYp(1,1)=KY;
-A=Y/(N*E)./(K/(N*E))^alpha; % YJ: 接上面对N的注释，这里可知 N*E = 1 = total labor supply. 但A是什么？
+A=Y/(N*E)./(K/(N*E))^alpha; % YJ: 接上面对N的注释，这里可知 N*E = 1 = total labor supply
+% YJ: 所以A = TFP = Y / (K^alpha * (N*E)^(1-alpha)), 见paper footnote 13
+% YJ: 按照footnote 13的说法，这里应该计算为Y / (K^alpha * (N*E)^gamma)才对？
+% YJ: 不过N*E = 1, 即使作者写错了也不影响结果...
 M=sum(sum(mu)); % mass of plants producing
 Mp(1,1)=M;
 Ap(1,1)=A;
@@ -293,7 +296,9 @@ disp('End of Benchmark Economy')
 % 2 - if negative corr of tax/subsidy and productivity (tax high s)
 % 3 - if positive corr of tax/subsidy and productivity  (tax low s)
 
-type=2;
+% YJ: modify type here to get different distortion settings
+% type=2;
+type = 2;
 indtaus=1; % Set to 0 if tax only experiments (NOTE: also set sub=0)
 
 % Mass of distorted and undistorted plants. Note: nosub=sub=1/3 is the
@@ -304,144 +309,151 @@ sub=0.5;
 taup=[0.0 0.1 0.2 0.3 0.4];
 
 for tax=2:ntax
-
-tau=taup(tax);
-
-p=ones(ns,1)*[sub nosub (1-nosub-sub)];
-hsmatrix=hs*ones(1,ntau);
-
-if type==1
-  % iid case
-  g=hsmatrix.*p;
-  taus0=0.0;
-  taus1=0.9;
-  
-elseif type==2
-  % correlated case: subsidize a fraction sub of lowest prod plants
-  g=zeros(ns,ntau);
-  cumgs=cumsum(hs);
-  I=find(cumgs<=sub);
-  g(I,1)=hs(I);
-  if nosub>0
-      I=find(cumgs>sub & cumgs<=sub+nosub);
-      g(I,2)=hs(I);
-  end
-  J=find(cumgs>nosub+sub);
-  g(J,3)=hs(J);
-  
-  taus0=0.0;
-  taus1=.99;
-
-else
-  % correlated case: subsidize a fraction sub of high prod plants
-  g=zeros(ns,ntau);
-  cumgs=cumsum(hs);
-  I=find(cumgs<=1-sub-nosub);
-  g(I,3)=hs(I);
-  if nosub>0
-      I=find(cumgs>1-sub-nosub & cumgs<=1-sub);
-      g(I,2)=hs(I);
-  end
-  J=find(cumgs>1-sub);
-  g(J,1)=hs(J);
-  
-  taus0=0.0;
-  taus1=0.9;
-end
-
-if indtaus==0
+    
+    tau=taup(tax);
+    
+    p=ones(ns,1)*[sub nosub (1-nosub-sub)]; % YJ: prob dist of tau
+    hsmatrix=hs*ones(1,ntau);
+    
+    if type==1
+        % iid case
+        g=hsmatrix.*p; % YJ: joint PDF g = h(s) * p(s,tau)
+        taus0=0.0;
+        taus1=0.9;
+        
+    elseif type==2
+        % correlated case: subsidize a fraction sub of lowest prod plants
+        g=zeros(ns,ntau);
+        cumgs=cumsum(hs);
+        I=find(cumgs<=sub);
+        g(I,1)=hs(I);
+        if nosub>0
+            I=find(cumgs>sub & cumgs<=sub+nosub);
+            g(I,2)=hs(I);
+        end
+        J=find(cumgs>nosub+sub);
+        g(J,3)=hs(J);
+        
+        taus0=0.0;
+        taus1=.99;
+        
+    else % YJ: if type == 3
+        % correlated case: subsidize a fraction sub of high prod plants
+        g=zeros(ns,ntau);
+        cumgs=cumsum(hs);
+        I=find(cumgs<=1-sub-nosub);
+        g(I,3)=hs(I);
+        if nosub>0
+            I=find(cumgs>1-sub-nosub & cumgs<=1-sub);
+            g(I,2)=hs(I);
+        end
+        J=find(cumgs>1-sub);
+        g(J,1)=hs(J);
+        
+        taus0=0.0;
+        taus1=0.9;
+    end
+    
+    if indtaus==0
         % Tax only computations and experiments
         disp('Computing case of tax only (no subsidy)')
         tau=taup(tax);
         taus0=0.5;
         sub=0;
         resid=Sub_fcn(taus0);
-else
-    resid0=Sub_fcn(taus0);
-    resid1=Sub_fcn(taus1);
-
-    if resid0*resid1>0 
-        disp('WARNING: No equilibrium tau exists')
-        break
     else
-        iconv4=0;
-        tol4=0.0000001;
-        maxit4=100;
-        it4=1;
-
-    while (iconv4==0 && it4<=maxit4)
-        taus=(taus0+taus1)/2;
-        resid=Sub_fcn(taus);
-        if abs(resid)<tol4
-            iconv4=1;
-            disp('taus has converged in')
-            it4
-            tau
-            taus
+        resid0=Sub_fcn(taus0);
+        resid1=Sub_fcn(taus1);
+        % YJ: 作者在paper p9提到，(in each level of tax) we set the size
+        % YJ: of the subsidy so that the net effect on steady-state capital accumulation is zero
+        % YJ: 此处tau0和tau1（取负号后）都是对subsidy大小的猜测，而Sub_fcn()的作用是对输入的tau
+        % YJ: 计算distorted K和baseline K之间的距离。接下来我们的目标就是让Sub_fcn的值降到0
+        
+        if resid0*resid1>0
+            disp('WARNING: No equilibrium tau exists')
+            break % YJ: 如果tau0 = 0和tau1 = 0.9之间都不存在Sub_fcn(tau) = 0的解tau,
+            % YJ: 那就说明no (solution) equilibrium tau exists
         else
-            if resid1*resid>0
-                taus1=taus;
-            else
-                taus0=taus;
-            end
-            it4=it4+1;
-            if it4>maxit4
-                disp('taus has not converged in')
-                maxit4
+            iconv4=0;
+            tol4=0.0000001;
+            maxit4=100;
+            it4=1;
+            
+            % YJ: 接下来用bisection解出满足steady-state total capital doesn't
+            % YJ: change的subsidy level tau
+            while (iconv4==0 && it4<=maxit4)
+                taus=(taus0+taus1)/2;
+                resid=Sub_fcn(taus);
+                if abs(resid)<tol4
+                    iconv4=1;
+                    disp('taus has converged in')
+                    it4
+                    tau % YJ: tau is level of tax
+                    taus % YJ: taus is the corresponding level of subsidy
+                else
+                    if resid1*resid>0
+                        taus1=taus;
+                    else
+                        taus0=taus;
+                    end
+                    it4=it4+1;
+                    if it4>maxit4
+                        disp('taus has not converged in')
+                        maxit4
+                    end
+                end
             end
         end
     end
-    end
-end
-
-% Compute aggregate statistics
-Y=sum(sum(smatrix.*kbar.^alpha.*nbar.^gamma.*mu));
-K=sum(sum(kbar.*mu));
-Yp(1,tax)=Y;
-Kp(1,tax)=K;
-KYp(1,tax)=K/Y;
-A=Y/(N*E)./(K/(N*E))^alpha;
-Ap(1,tax)=A;
-Ep(1,tax)=E;
-M=sum(sum(mu));
-Mp(1,tax)=M;
-wp(1,tax)=w;
-sgdpp(1,tax)=sum(-mtauo(:,1).*smatrix(:,1).*kbar(:,1).^alpha.*...
-    nbar(:,1).^gamma.*mu(:,1)-mtauk(:,1).*r.*kbar(:,1).*mu(:,1)...
-    -mtaun(:,1).*w.*nbar(:,1).*mu(:,1))/Y;
-tausp(1,tax)=taus;
-Ytau=sum(smatrix.*kbar.^alpha.*nbar.^gamma.*mu);
-sYtau=Ytau./Y;
-SYp(1,tax)=sYtau(1);
-sKtau=sum(kbar.*mu)./K;
-KsKp(1,tax)=sKtau(1);
-
-% Distribution statistics
-relmup(:,ntau*(tax-1)+1:ntau*tax)=mu./sum(sum(mu));
-relmus=sum(mu,2)./sum(sum(mu));
-relmusp(:,tax)=relmus;
-sK=(kbar.*mu)./K;
-sKp(:,ntau*(tax-1)+1:ntau*tax)=sK;
-sN=(nbar.*mu)./(N*E);
-sNp(:,ntau*(tax-1)+1:ntau*tax)=sN;
-sY=(smatrix.*kbar.^alpha.*nbar.^gamma.*mu)./Y;
-sYp(:,ntau*(tax-1)+1:ntau*tax)=sY;
-
-% Plant statistics
-kbarp(:,ntau*(tax-1)+1:ntau*tax)=kbar;
-nbarp(:,ntau*(tax-1)+1:ntau*tax)=nbar;
-xbarp(:,ntau*(tax-1)+1:ntau*tax)=xbar;
-
-rnbar=nbar./normalization_emp;
-[junk,I]=sort(rnbar(:));
-modelnp(:,tax)=rnbar(I);
-modelsNp(:,tax)=sN(I);
-modelmup(:,tax)=mu(I)./sum(mu(:));
-
-% Average employment per plant
-AEPP=1/(M*normalization_emp);
-AEPPp(1,tax)=AEPP;
-
+    
+    % Compute aggregate statistics
+    Y=sum(sum(smatrix.*kbar.^alpha.*nbar.^gamma.*mu));
+    K=sum(sum(kbar.*mu));
+    Yp(1,tax)=Y; % YJ: 这里的tax是loop argument
+    Kp(1,tax)=K;
+    KYp(1,tax)=K/Y;
+    A=Y/(N*E)./(K/(N*E))^alpha;
+    Ap(1,tax)=A;
+    Ep(1,tax)=E; % YJ: distorted E已经在Sub_fcn()中算好了
+    M=sum(sum(mu));
+    Mp(1,tax)=M;
+    wp(1,tax)=w;
+    sgdpp(1,tax)=sum(-mtauo(:,1).*smatrix(:,1).*kbar(:,1).^alpha.*...
+        nbar(:,1).^gamma.*mu(:,1)-mtauk(:,1).*r.*kbar(:,1).*mu(:,1)...
+        -mtaun(:,1).*w.*nbar(:,1).*mu(:,1))/Y;
+    tausp(1,tax)=taus; % YJ: level of subsidy
+    Ytau=sum(smatrix.*kbar.^alpha.*nbar.^gamma.*mu); % YJ: total output for each tau
+    sYtau=Ytau./Y; % YJ: output decomposition by tau
+    SYp(1,tax)=sYtau(1); % YJ: output share of firms receiving subsidy
+    sKtau=sum(kbar.*mu)./K; % YJ: capital decomposition by tau
+    KsKp(1,tax)=sKtau(1); % YJ: capital share of firms receiving subsidy
+    
+    % Distribution statistics
+    relmup(:,ntau*(tax-1)+1:ntau*tax)=mu./sum(sum(mu)); % YJ: mu dist by s and tau
+    relmus=sum(mu,2)./sum(sum(mu)); % YJ: mu dist by s
+    relmusp(:,tax)=relmus;
+    sK=(kbar.*mu)./K; % YJ: k dist by s and tau
+    sKp(:,ntau*(tax-1)+1:ntau*tax)=sK;
+    sN=(nbar.*mu)./(N*E); % YJ: n dist by s and tau
+    sNp(:,ntau*(tax-1)+1:ntau*tax)=sN;
+    sY=(smatrix.*kbar.^alpha.*nbar.^gamma.*mu)./Y; % YJ: y dist by s and tau
+    sYp(:,ntau*(tax-1)+1:ntau*tax)=sY;
+    
+    % Plant statistics
+    kbarp(:,ntau*(tax-1)+1:ntau*tax)=kbar;
+    nbarp(:,ntau*(tax-1)+1:ntau*tax)=nbar;
+    xbarp(:,ntau*(tax-1)+1:ntau*tax)=xbar;
+    
+    rnbar=nbar./normalization_emp;
+    [junk,I]=sort(rnbar(:));
+    modelnp(:,tax)=rnbar(I);
+    modelsNp(:,tax)=sN(I);
+    modelmup(:,tax)=mu(I)./sum(mu(:));
+    
+    % Average employment per plant
+    AEPP=1/(M*normalization_emp);
+    AEPPp(1,tax)=AEPP;
+    
 end
 
 % File for latex editing

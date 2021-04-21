@@ -92,4 +92,4 @@ Y=sum(sum(smatrix.*kbar.^alpha.*nbar.^gamma.*mu));
 
 % Compute resid as difference between the actual and target revenue to 
 % output ratio.
-resid=K/Kbe-1;
+resid=K/Kbe-1; % YJ: Kbe is K from bechmark (no distortion)
